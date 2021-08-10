@@ -1,0 +1,171 @@
+.card-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .card-wrapper {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    border: 0.15vw solid black;
+    background-color: white;
+    box-sizing: border-box;
+  }
+  .card-wrapper:hover {
+    cursor: pointer;
+  }
+  
+  .card-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 75%;
+    margin-bottom: 1%;
+  }
+  
+  .card-name-wrapper {
+    position: relative;
+    text-align: center;
+    height: 6%;
+    font-size: 0.6rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+  .card-name-wrapper.long {
+    font-size: 0.5rem;
+  }
+  .card-atk {
+    position: absolute;
+    font-family: "Times New Roman", Times, serif;
+    width: 1vw;
+    height: 1vw;
+    left: 2%;
+    top: 0%;
+    text-align: center;
+    font-size: 0.8rem;
+    margin-top: 4%;
+  }
+  
+  .card-def {
+    position: absolute;
+    font-family: "Times New Roman", Times, serif;
+    width: 1vw;
+    height: 1vw;
+    right: 2%;
+    top: 0%;
+    text-align: center;
+    font-size: 0.8rem;
+    margin-top: 4%;
+  }
+  .card-def2 {
+    right: 10%;
+  }
+  
+  .card-text-wrapper {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 1%;
+    width: 100%;
+    font-size: 0.7rem;
+    text-align: center;
+  }
+  .card-text {
+    position: absolute;
+    margin-top: 5%;
+  }
+  .card-text.long {
+    font-size: 0.5rem;
+  }
+  
+  .athens-card {
+    color: rgb(107, 107, 200);
+    border-color: rgb(107, 107, 200);
+  }
+  
+  .sparta-card {
+    color: rgb(160, 2, 2);
+    border-color: rgb(160, 2, 2);
+  }
+  
+  .thebes-card {
+    color: rgb(189, 175, 56);
+    border-color: rgb(189, 175, 56);
+  }
+  
+  .troy-card {
+    color: rgb(67, 134, 61);
+    border-color: rgb(67, 134, 61);
+  }
+
+  .moving { 
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .shop-card .card-name-wrapper {
+    font-size: 1vw;
+  }
+  .shop-card .card-name-wrapper.long {
+    font-size: 0.9vw;
+  }
+  .shop-card .card-atk{
+    font-size: 1.5vw;
+  }
+  .shop-card .card-def {
+    font-size: 1.5vw;
+  }
+  .shop-card .card-text-wrapper {
+    font-size: 0.8vw;
+  }
+  .shop-card .card-text-wrapper .long {
+    font-size: 0.8vw;
+  }
+  .shop-buy-card-wrapper .card-name-wrapper {
+    font-size: 1vw;
+  }
+  .shop-buy-card-wrapper .card-atk{
+    font-size: 1.5vw;
+  }
+  .shop-buy-card-wrapper .card-def {
+    font-size: 1.5vw;
+  }
+  .shop-buy-card-wrapper .card-text-wrapper {
+    font-size: 0.8vw;
+  }
+
+  .city-health-outer {
+    position: absolute;
+    width: 100%;
+    height: 0.5rem;
+    top: 102%;
+    background-color: black;
+    border: grey solid 0.1rem;
+  }
+  .city-health-inner {
+    height: 100%;
+    transition: all 1s;
+  }
+  .city-health-inner.full {
+    background-color: rgb(136, 223, 6);
+  }
+  .city-health-inner.medium {
+    background-color: yellow;
+  }
+  .city-health-inner.low {
+    background-color: red;
+  }
+
+  .selected {
+    background-color: rgba(146, 255, 161, 0.616);
+  }
+  .can-move-here {
+    background-color: rgb(166, 166, 246);
+    cursor: pointer;
+  }
+  .can-attack-here {
+    background-color: rgba(255, 0, 0, 0.623);
+    z-index: 100;
+  }
