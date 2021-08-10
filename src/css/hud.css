@@ -1,0 +1,141 @@
+.menu-modal-outer {
+    background-color: rgba(0, 0, 0, 0.637);
+    position: fixed;
+    width: 100%;
+    right: 0%;
+    height: 100%;
+    top: 0%;
+    transition: 0.2s;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .menu-modal-outer.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .menu-modal-inner {
+    width: 20%;
+    height: 60%;
+    position: fixed;
+    left: 40%;
+    top: 20%;
+    background-color: white;
+    border: green solid 1vw;
+    border-radius: 1vw;
+    font-size: 1vw;
+  }
+  .ingame-menu-button {
+    width: 100%;
+    height: 10%;
+    background-color: mediumaquamarine;
+    border: rgba(0, 0, 0, 0.2) 0.4vw solid;
+  }
+  .ingame-menu-button:hover {
+    background-color: rgb(68, 134, 112);
+    cursor: pointer;
+  }
+  .resource-bar {
+    position: fixed;
+    background-color: black;
+    display: flex;
+    font-size: 1vw;
+    color: lightcyan;
+    top: 0%;
+    right: 0%;
+    width: 100%;
+    height: 4%;
+  }
+  .resource {
+    margin-left: 8vw;
+    margin-top: 0.3vw;
+    margin-right: 0.2vw;
+  }
+  .income {
+    font-size: 0.6vw;
+    margin-right: 0.5vw;
+    margin-top: 0.3vw;
+  }
+  .icon {
+    width:1.5vw;
+    height: 1.5vw;
+    margin-top: 0.3vw;
+  }
+  .citizen-icon {
+    display: flex;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.7rem;
+  }
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .city-shop-button {
+    position: fixed;
+    left: -4%;
+    bottom: -5%;
+    border-radius: 40%;
+    width: 8vw;
+    height: 7vw;
+    background-color: rgb(73, 73, 73);
+    border: rgb(34, 34, 34) solid 0.5vw;
+    color: goldenrod;
+  }
+  .cstext {
+    font-size: 3vw;
+    position: absolute;
+    right: 17%;
+    top: 3%;
+  }
+  .city-shop-button.open {
+    background-color: rgb(146, 146, 146);
+  }
+  .city-shop-button:hover {
+    background-color: rgb(146, 146, 146);
+    cursor: pointer;
+  }
+
+  .end-turn-wrapper {
+    position: fixed;
+    bottom: -1vw;
+    right: -1vw;
+    width: 6vw;
+    height: 6vw;
+    background-color: rgb(116, 104, 182);
+    border-radius: 30%;
+  }
+  .end-turn-button {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    left: 0.2vw;
+    top: 0.2vw;
+    border-radius: 50%;
+    border: solid 0.2vw honeydew;
+    background-color: rgb(3, 44, 82);
+    color: white;
+    font-size: 2vw;
+  }
+  
+  .end-turn-button:hover {
+    background-color: rgb(12, 109, 200);
+    cursor: pointer;
+  }
+  .end-turn-button:active {
+    background-color: rgb(125, 125, 150);
+    transition: all 0.1s;
+  }
+
+  .moving-card {
+    width: 6rem;
+    height: 7rem;
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    pointer-events: none;
+  }
+  .moving-card-container {
+    width: 100%;
+    height: 100vw;
+  }

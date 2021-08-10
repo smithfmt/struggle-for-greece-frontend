@@ -1,0 +1,36 @@
+.menu-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.menu {
+  font-size: xx-large;
+  padding: 1rem;
+  padding-left: 4rem;
+  padding-right: 4rem;
+  border: 4px solid black;
+  justify-content: center;
+  text-align: center;
+}
+
+.menu-button { 
+  display: flex;
+  justify-content: center;
+  min-width: 300px;
+}
+
+.ready {
+  background-color: red;
+}
+
+.profile {
+  position: fixed;
+  top: 5%;
+  right: 5%;
+  width: 300px;
+}
+
+body {
+  background-color: darkseagreen;
+}
+

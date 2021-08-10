@@ -1,0 +1,349 @@
+.city-shop-modal-outer {
+    position: fixed;
+    background-color: rgba(2, 4, 114, 0.575);
+    width: 100%;
+    height: 100%;
+    right: 0%;
+    top: 0%;
+    transition: 0.3s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .city-shop-modal-outer.open {
+    opacity: 1;
+    pointer-events: all;
+    transition: all 0.2s;
+  }
+  .city-shop-modal-inner {
+    position: fixed;
+    width: 62%;
+    height: 75%;
+    right: 19%;
+    top: 15%;
+    border-radius: 5%;
+  }
+  .shop-card {
+    width: 10vw;
+    height: 12vw;
+    position: relative;
+    margin-right: 1vw;
+    margin-left: 1vw;
+    margin-bottom: 2vw;
+    margin-top: 2vw;
+    border-radius: 0%;
+    background-color: transparent;
+    border: transparent;
+  }
+  .shop-container {
+    display: flex;
+    flex-wrap: wrap;
+    position: fixed;
+    align-content: center;
+    padding: 1vw;
+  }
+  .shop-card-price {
+    position: absolute;
+    display: flex;
+    top: 105%;
+    left: 0%;
+    background-color: rgba(255, 255, 255, 0.377);
+    border: rgba(83, 83, 83, 0.589) solid 0.2vw;
+    width: 10vw;
+    height: 2.5vw;
+  }
+  .price-food {
+    position: relative;
+    display: flex;
+    font-size: 2vw;
+    width: 2vw;
+    height: 2vw;
+    top: 5%;
+    left: 0%;
+  }
+  .price-money {
+    position: relative;
+    display: flex;
+    font-size: 2vw;
+    width: 2vw;
+    height: 2vw;
+    left: 47%;
+    top: 5%;
+  }
+  .price-money2 {
+    left: 35%;
+  }
+  .shop-buy-modal-out {
+    position: fixed;
+    display: flex;
+    transition: 0.2s;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.596);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    transition: all 0.2s;
+  }
+  .shop-buy-modal-in {
+    position: absolute;
+    z-index: 101;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+    width: 40%;
+  }
+  .shop-buy-card-button {
+    position: absolute;
+    bottom: 3%;
+    font-size: 1.5vw;
+    opacity: 0;
+    pointer-events: none;
+    border: 0.2vw rgba(82, 82, 82, 0.527) solid;
+    background-color: rgba(255, 217, 0, 0.527);
+    color: whitesmoke;
+    border-radius: 0.5vw;
+  }
+  .shop-buy-card-button:hover {
+    background-color: rgba(71, 61, 2, 0.527);
+    cursor: pointer;
+  }
+  .shop-buy-card-button.purchaseable {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .shopBuyButtonItemCost {
+    display: flex;
+    width: 2vw;
+    height: 2vw;
+    font-size: 2vw;
+    margin-left: 2vw;
+  }
+  .shop-buy-card-wrapper {
+    position: absolute;
+    height: 50%;
+    width: 50%;
+    top: 5%;
+  }
+  .shop-buy-card-wrapper .card-text{
+    font-size: 1vw;
+  }
+  .shop-buy-modal-out.open{
+    opacity: 1;
+    pointer-events: all;
+  }
+  .shop-buy-card-price {
+    position: relative;
+    top: 10%;
+  }
+  .shop-buy-card-description {
+    position: absolute;
+    top: 70%;
+    width: 80%;
+    height: 25%;
+    font-size: 1.5vw;
+  }
+  .shop-buy-card-buffer {
+    position: absolute;
+    background-color: rgba(98, 98, 98, 0.664);
+    width: 90%;
+    top: 65%;
+    height: 2%;
+  }
+  .athens-city-shop-out {
+    background-color: rgba(2, 4, 114, 0.575);
+  }
+  .athens-city-shop-in {
+    background-color: rgb(182, 201, 238);
+    border: rgb(3, 167, 167) solid 1vw;
+  }
+  .sparta-city-shop-out {
+    background-color: rgba(114, 2, 2, 0.575);
+  }
+  .sparta-city-shop-in {
+    background-color: rgb(243, 200, 200);
+    border: rgb(139, 0, 0) solid 1vw;
+  }
+  .troy-city-shop-out {
+    background-color: rgba(1, 49, 1, 0.575);
+  }
+  .troy-city-shop-in {
+    background-color: rgb(188, 235, 190);
+    border: rgb(8, 80, 1) solid 1vw;
+  }
+  .thebes-city-shop-out {
+    background-color: rgba(128, 79, 2, 0.575);
+  }
+  .thebes-city-shop-in {
+    background-color: rgb(236, 218, 194);
+    border: rgb(131, 87, 5) solid 1vw;
+  }
+
+  .city-level-tree {
+    position: absolute;
+    top: 15%;
+    left: 5%;
+    width: 16vw;
+    font-size: 0.9vw;
+  }
+  .city-level-button {
+    position: absolute;
+    font-size: 1vw;
+    background-color: rgb(180, 179, 179);
+    border: black solid 0.2vw;
+    color: azure;
+    border-radius: 50%;
+    width: 1.8vw;
+    height: 1.8vw;
+    align-items: center;
+  }
+  .city-level-button.bought {
+    background-color: rgb(184, 172, 8);
+  }
+  .city-level-button.can-buy:hover {
+    background-color: rgb(70, 70, 70);
+    cursor: pointer;
+  }
+  .city-level-price {
+    position: absolute;
+    background-color: rgba(206, 206, 206, 0.548);
+    width: 15vw;
+    height: 3vw;
+    left: 10%;
+    display: flex;
+    border-radius: 0.2vw;
+    border: rgba(128, 128, 128, 0.205) solid 0.4vw;
+    align-items: center;
+  }
+  .level-display {
+    position: relative;
+    font-size: 1.5vw;
+    left: 2%;
+  }
+  .level-price-money {
+    position: relative;
+    display: flex;
+    font-size: 1.5vw;
+    width: 2vw;
+    height: 2vw;
+    left: 24%;
+  }
+  .level-price-food {
+    position: relative;
+    display: flex;
+    font-size: 1.5vw;
+    width: 2vw;
+    height: 2vw;
+    left: 9%;
+  }
+  .city-building-shop {
+    position: absolute;
+    width: 30vw;
+    height: 100%;
+    right: 5%;
+    font-size: 1vw;
+  }
+  .city-building-shop-item {
+    display: flex;
+    position: relative;
+    width: 100%;
+    background-color: rgba(146, 146, 146, 0.322);
+    height: 4vw;
+    margin-bottom: 1vw;
+    margin-top: 1vw;
+    align-items: center;
+    padding-left: 1vw;
+  }
+  .city-building-shop-item .cost-display {
+    display: flex;
+    position: absolute;
+    opacity: 0;
+    width: 2vw;
+    top: -10%;
+    left: -12%;
+    pointer-events: none;
+  }
+  .city-building-button:hover + .cost-display {
+    opacity: 1;
+  }
+  .city-building-shop-text {
+    margin-left: 1vw;
+    font-size: 1.5vw;
+  }
+  .city-building-button {
+    font-size: 1vw;
+    background-color: rgb(180, 179, 179);
+    border: black solid 0.2vw;
+    color: azure;
+    border-radius: 50%;
+    width: 1.5vw;
+    height: 1.5vw;
+  }
+  .city-building-button.bought {
+    background-color: rgb(184, 172, 8);
+  }
+  .city-building-button.can-buy:hover {
+    background-color: rgb(70, 70, 70);
+    cursor: pointer;
+  }
+  .divider {
+    background-color: rgba(0, 0, 0, 0.74);
+    position: relative;
+    height: 0.2vw;
+    width: 110%;
+    right: 5%;
+  }
+  .trained {
+    left: 0%;
+    top: 40%;
+    z-index: 1000;
+    position: absolute;
+    font-size: 3vw;
+    color: rgba(0, 0, 0, 0.63);
+    transform: rotate(310deg);
+  }
+
+  .hero-shop-card {
+    width: 8rem;
+    height: 10rem;
+    position: relative;
+    margin-right: 1rem;
+    margin-left: 1rem;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    border-radius: 0%;
+    background-color: transparent;
+    border: transparent;
+  }
+  .hero-shop-card-price {
+    position: absolute;
+    display: flex;
+    top: 105%;
+    left: 0%;
+    background-color: rgba(255, 255, 255, 0.377);
+    border: rgba(83, 83, 83, 0.589) solid 0.2vw;
+    width: 7rem;
+    height: 2.5rem;
+    margin-left: 0.5rem;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+  .hero-price-money {
+    position: absolute;
+    display: flex;
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+    top: 5%;  
+    margin-right: 1rem;
+  }
+  .hero-price-money2 {
+    left: 35%;
+  }
