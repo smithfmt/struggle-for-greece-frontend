@@ -34,6 +34,8 @@ class Menu extends React.Component {
             <div className={`menu-modal-outer ${this.open}`}>
                 <div className="menu-modal-inner">
                     <button className="ingame-menu-button" onClick={() => this.props.goToPage("/")}>Main Menu →</button>
+                    <button className="ingame-menu-button" onClick={() => this.props.openCardList()}>View Cards →</button>
+                    <button className="ingame-menu-button" onClick={() => this.props.openPlayerInfo()}>Player Stats →</button>
                 </div>
             </div>
         )

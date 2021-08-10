@@ -4,17 +4,19 @@ import CitizenIconEmpty from "../images/Icons/CitizenIconEmpty.png";
 import CitizenIconFilled from "../images/Icons/CitizenIconFilled.png";
 import Farm from "../images/Buildings/Farm.png";
 import Mine from "../images/Buildings/Mine.png";
+import Wall from "../images/Buildings/Wall.png";
+import House from "../images/Buildings/House.png";
 //import PropTypes from "prop-types";
 
 class City extends React.Component {
 
-    asignCitizen = (job, t, speed) => {
+    asignCitizen = async (job, t, speed) => {
         const user = JSON.parse(localStorage.getItem("SFGUser"));
         if (user.name !== this.props.game.teams[this.props.team.split("-")[0]].player) return;
         const team = {...t};
         const citizens = team.citizens;
         if (this.props.movingCard.canPlace && this.props.movingCard.canPlace.city===this.props.team && this.props.movingCard.canPlace.citizen==="Citizen") {
-            if (citizens.number<team.level+1) {citizens.number++}
+            if (citizens.number<team.level+1) {citizens.number++};
         };
         if (citizens.mine+citizens.farm<citizens.number) {
             citizens[job]++;
@@ -23,16 +25,15 @@ class City extends React.Component {
             if (citizens.mine) {
                 citizens.farm++;
                 citizens.mine--;
-            }
+            };
         } else if (job==="mine") {
             if (citizens.farm) {
                 citizens.mine++;
                 citizens.farm--;
-            }
-        }
-        team.foodIncome = citizens.farm*speed;
-        team.moneyIncome = citizens.mine*speed;
-        this.props.updateTeam(team, this.props.team.split("-")[0]);
+            };
+        };
+        await this.props.updateTeam(team, this.props.team.split("-")[0]);
+        this.props.calculateIncome(this.props.team.split("-")[0]);
     }
 
     render() {
@@ -46,6 +47,9 @@ class City extends React.Component {
         if (this.props.movingCard.canPlace && this.props.movingCard.canPlace.city===this.props.team) {
             canPlace="can-place";
             if (this.props.movingCard.canPlace.citizen==="Citizen") {
+                if (this.props.team!=="sparta-city") {
+                    canPlace = "";
+                }
                 if (citizens.number<team.level+1) {
                     citizenPlace = "citizen-place";
                 };
@@ -59,9 +63,36 @@ class City extends React.Component {
         if (this.props.canAttack && this.props.canAttack.includes(this.props.id)) {
             canAttackHere="can-attack-here";
         };
-
+        let canCastHere="";
+        if (this.props.canCast && this.props.canCast.includes(this.props.id)) {
+            canCastHere="can-cast-here";
+        };
+        let bought = "";
+        const walls = this.props.cards[`${this.props.team.split("-")[0]}City`].walls
+        if ( walls && walls > 0) {
+            bought = "bought";
+        };
+        const citizenCount = this.props.game.teams[this.props.team.split("-")[0]].citizens.number;
+        let house1; let house2; let house3; let house4; let house5; let house6; let house7; let house8; let house9; let house10; let house11; 
+        if (citizenCount>0) {house1 = "occupied"}; if (citizenCount>1) {house2 = "occupied"}; if (citizenCount>2) {house3 = "occupied"}; if (citizenCount>3) {house4 = "occupied"}; if (citizenCount>4) {house5 = "occupied"}; 
+        if (citizenCount>5) {house6 = "occupied"}; if (citizenCount>6) {house7 = "occupied"}; if (citizenCount>7) {house8 = "occupied"}; if (citizenCount>8) {house9 = "occupied"};if (citizenCount>9) {house10 = "occupied"}; if (citizenCount>10) {house11 = "occupied"};
         return (
+            <>
+            <img src={Wall} alt="wall" className={`wall ${this.props.team}-wall ${bought}`}/>
             <div className={`${this.props.team}-container`}>
+                <div className={`${this.props.team}-house-container house-container`}>
+                    <img src={House} alt="house" className={`house1 house ${house1}`}/>
+                    <img src={House} alt="house" className={`house2 house ${house2}`}/>
+                    <img src={House} alt="house" className={`house3 house ${house3}`}/>
+                    <img src={House} alt="house" className={`house4 house ${house4}`}/>
+                    <img src={House} alt="house" className={`house5 house ${house5}`}/>
+                    <img src={House} alt="house" className={`house6 house ${house6}`}/>
+                    <img src={House} alt="house" className={`house7 house ${house7}`}/>
+                    <img src={House} alt="house" className={`house8 house ${house8}`}/>
+                    <img src={House} alt="house" className={`house9 house ${house9}`}/>
+                    <img src={House} alt="house" className={`house10 house ${house10}`}/>
+                    <img src={House} alt="house" className={`house11 house ${house11}`}/>
+                </div>
                 <button className={`${this.props.team}-farm farm ${citizenPlace}`} onClick={() => this.asignCitizen("farm", team, this.props.game.gamespeed)}>
                     <div className="icon citizen-icon">
                         {citizens.farm}
@@ -84,6 +115,7 @@ class City extends React.Component {
                         cardSlotProps={this.props.cardSlotProps}
                         canMoveHere={canMoveHere}
                         canAttackHere={canAttackHere}
+                        canCastHere={canCastHere}
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
@@ -94,6 +126,7 @@ class City extends React.Component {
                         cardSlotProps={this.props.cardSlotProps}
                         canMoveHere={canMoveHere}
                         canAttackHere={canAttackHere}
+                        canCastHere={canCastHere}
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
@@ -104,6 +137,7 @@ class City extends React.Component {
                         cardSlotProps={this.props.cardSlotProps}
                         canMoveHere={canMoveHere}
                         canAttackHere={canAttackHere}
+                        canCastHere={canCastHere}
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
@@ -116,6 +150,7 @@ class City extends React.Component {
                         cardSlotProps={this.props.cardSlotProps}
                         canMoveHere={canMoveHere}
                         canAttackHere={canAttackHere}
+                        canCastHere={canCastHere}
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
@@ -126,6 +161,7 @@ class City extends React.Component {
                         cardSlotProps={this.props.cardSlotProps}
                         canMoveHere={canMoveHere}
                         canAttackHere={canAttackHere}
+                        canCastHere={canCastHere}
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
@@ -136,6 +172,7 @@ class City extends React.Component {
                         cardSlotProps={this.props.cardSlotProps}
                         canMoveHere={canMoveHere}
                         canAttackHere={canAttackHere}
+                        canCastHere={canCastHere}
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
@@ -154,6 +191,7 @@ class City extends React.Component {
                     </div>
                 </div>
             </div>
+            </>
         )
     }
 }

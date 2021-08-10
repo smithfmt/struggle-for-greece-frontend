@@ -8,6 +8,7 @@ import Lobby from "./Lobby";
 import Play from "./Play";
 import Login from "./Login";
 import MainMenu from "./MainMenu";
+import Privacy from "./Privacy";
 
 class App extends React.Component {
     state = {
@@ -68,6 +69,7 @@ class App extends React.Component {
         this.props.history.push(page);
     };
 
+    
     joinGame = async (lobby1, slot) => {
         const lobby = {...lobby1}
         if (!lobby.players) {lobby.players={}}
@@ -186,12 +188,18 @@ class App extends React.Component {
         const users = await base.fetch(`users`, { context: this });
         const userArr = Object.values(users);
         let thisUser;
+        let userData;
         if (user.fb) {
             const authData = await this.authenticate("Facebook");
             user.uid = authData.user.uid
-            thisUser = JSON.stringify(userArr.filter(u => u.uid === user.uid)[0]);
+            userData = userArr.filter(u => u.uid === user.uid)[0]
+            delete userData.password
+            thisUser = JSON.stringify(userData);
         } else {
-            thisUser = JSON.stringify(userArr.filter(u => u.name === user.name && u.password === user.password)[0]);
+            userData = userArr.filter(u => u.name === user.name && u.password === user.password)[0];
+            delete userData.password
+            console.log(userData)
+            thisUser = JSON.stringify(userData);
         }
         if (!thisUser) {
             alert("You need to sign-in first!");
@@ -216,29 +224,38 @@ class App extends React.Component {
         const page = this.location;
         if (page === "/") {
             return (
-                <MainMenu goToPage={this.goToPage} />
+                <div className="app-page">
+                    <MainMenu goToPage={this.goToPage} />
+                </div>
             )
         }
         if (page === "/host") {
             return (
-                <Host hostLobby={this.hostLobby} goToPage={this.goToPage} />
+                <div className="app-page">
+                    <Host hostLobby={this.hostLobby} goToPage={this.goToPage} />
+                </div>
             )
         } else if (page === "/join") {
             return (
-                <Join 
-                lobbies={this.state.lobbies} 
-                joinLobby={this.joinLobby} 
-                goToPage={this.goToPage} 
-                joinGameFromList={this.joinGameFromList}
-                />
+                <div className="app-page">
+                    <Join 
+                        lobbies={this.state.lobbies} 
+                        joinLobby={this.joinLobby} 
+                        goToPage={this.goToPage} 
+                        joinGameFromList={this.joinGameFromList}
+                    />
+                </div>
             )
         } else if (page === "/login") {
             return (
-                <Login authenticate={this.authenticate} goToPage={this.goToPage} signup={this.signup} login={this.login} />
+                <div className="app-page">
+                    <Login authenticate={this.authenticate} goToPage={this.goToPage} signup={this.signup} login={this.login} />
+                </div>
             )
         } else if (page === ("/lobby/:lobbyname")) {
             return (
-                <Lobby 
+                <div className="app-page">
+                   <Lobby 
                     params={this.props.match.params} 
                     goToPage={this.goToPage} 
                     startGame={this.startGame} 
@@ -247,9 +264,18 @@ class App extends React.Component {
                     simulateJoin={this.simulateJoin}
                     joinGame={this.joinGame}
                     updateLobbyState={this.updateLobbyState}
-                />
+                /> 
+                </div>
             )
-        } else if (page === ("/play/:lobbyname")) {
+        } else if (page === ("/privacy-policy")) {
+            return (
+                <div className="app-page">
+                    <Privacy
+                        goToPage={this.goToPage} 
+                    />
+                </div>
+            )
+        }else if (page === ("/play/:lobbyname")) {
             return (
                 <Play 
                     params={this.props.match.params}
@@ -259,10 +285,10 @@ class App extends React.Component {
             )
         } else {
             return (
-            <>
-            <h2>404 Page Not Found</h2>
-            <button onClick={() => this.goToPage("/")}>Return to Main Menu</button>
-            </>
+            <div className="app-page">
+                <h2>404 Page Not Found</h2>
+                <button onClick={() => this.goToPage("/")}>Return to Main Menu</button>
+            </div>
             );
         }
     }

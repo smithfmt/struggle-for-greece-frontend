@@ -10,13 +10,8 @@ class ResourceBar extends React.Component {
         if (!this.props.game.teams) {
             return <div className="resource"></div>
         }
-        let city;
-        Object.keys(this.props.game.teams).forEach(team => {
-            if (this.props.game.teams[team].player === user.name) {
-                city = team;
-            };
-        });
-        const userStats = this.props.game.teams[city];
+        const team = Object.keys(this.props.game.teams).filter(tm => this.props.game.teams[tm].player===user.name)[0];
+        const userStats = this.props.game.teams[team];
         let turnDisplay = this.props.game.whoTurn;
         turnDisplay=`${turnDisplay.split("")[0].toUpperCase()}${turnDisplay.slice(1)}`;
         return (

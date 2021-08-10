@@ -24,21 +24,24 @@ class Join extends React.Component {
         const games = this.state.games
         return (
             <>
-            <div className="lobby-list">
-                <h2>Open Lobbies:</h2> 
-                {Object.keys(this.props.lobbies)
-                .filter(lobby => {return !this.props.lobbies[lobby].started})
-                .map(lobby => {return <LobbyCard lobby={this.props.lobbies[lobby]} joinLobby={this.props.joinLobby} key={lobby} />})
-                }
+            <h2 className="page-title">Join</h2>
+            <div className="join-page">
+                <div className="join-lobby-list">
+                    <h2>Open Lobbies:</h2> 
+                    {Object.keys(this.props.lobbies)
+                    .filter(lobby => {return !this.props.lobbies[lobby].started})
+                    .map(lobby => {return <LobbyCard lobby={this.props.lobbies[lobby]} joinLobby={this.props.joinLobby} key={lobby} />})
+                    }
+                </div>
+                <div className="join-game-list">
+                    <h2>Your Games:</h2> 
+                    {Object.keys(games)
+                    .filter(game => {return Object.keys(games[game].players).includes(user.name)})
+                    .map(game => {return <GameCard game={game} joinGameFromList={this.props.joinGameFromList} />})
+                    }
+                </div>
             </div>
-            <div className="game-list">
-                <h2>Your Games:</h2> 
-                {Object.keys(games)
-                .filter(game => {return Object.keys(games[game].players).includes(user.name)})
-                .map(game => {return <GameCard game={game} joinGameFromList={this.props.joinGameFromList} />})
-                }
-            </div>
-            <button onClick={() => this.props.goToPage("/")}>Return to Main Menu →</button>
+            <button className="mm-button" onClick={() => this.props.goToPage("/")}>Return to Main Menu →</button>
             </>
             
         );

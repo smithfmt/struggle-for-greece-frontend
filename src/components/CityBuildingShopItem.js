@@ -24,7 +24,7 @@ class CityBuildingShopItem extends React.Component {
             <div className="city-building-shop-item">
                 <button onClick={this.tryToBuy} className={`city-building-button ${bought} ${canBuy}`}></button>
                 <h2 className="cost-display">{this.props.cost}<img src={CoinIcon} alt="CoinIcon" /></h2>
-                <div className="city-building-shop-text"><div className="name">{this.props.building.name}</div><div style={{"font-size": "1vw"}}>{this.props.building.desc}</div></div>
+                <div className="city-building-shop-text"><div className="name">{this.props.building.name}</div><div style={{"fontSize": "1vw"}}>{this.props.building.desc}</div></div>
             </div>
             </>
         );
