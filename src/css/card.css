@@ -148,6 +148,13 @@
     height: 100%;
     transition: all 1s;
   }
+  .city-walls-inner {
+    position: absolute;
+    top: 0%;
+    background-color: rgb(82, 82, 82);
+    height: 100%;
+    transition: all 1s;
+  }
   .city-health-inner.full {
     background-color: rgb(136, 223, 6);
   }
@@ -156,16 +163,4 @@
   }
   .city-health-inner.low {
     background-color: red;
-  }
-
-  .selected {
-    background-color: rgba(146, 255, 161, 0.616);
-  }
-  .can-move-here {
-    background-color: rgb(166, 166, 246);
-    cursor: pointer;
-  }
-  .can-attack-here {
-    background-color: rgba(255, 0, 0, 0.623);
-    z-index: 100;
   }

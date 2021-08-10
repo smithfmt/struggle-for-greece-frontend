@@ -68,18 +68,18 @@ class CityShop extends React.Component {
                 <div className={`city-shop-modal-inner ${team}-city-shop-in`}>
                     <div className="shop-container">
                         <div>
-                            <ShopCard card={this.props.cards[`${team}Citizen`]} team={team} openBuyModal={this.openBuyModal} />
-                            <ShopCard card={this.props.cards[`${team}Soldier`]} team={team} openBuyModal={this.openBuyModal} />
-                            <ShopCard card={this.props.cards[`${team}Archer`]} team={team} openBuyModal={this.openBuyModal} />
-                            <ShopCard card={this.props.cards[`${team}Horseman`]} team={team} openBuyModal={this.openBuyModal} />
-                            <ShopCard card={this.props.cards[`ramSiege`]} team={team} openBuyModal={this.openBuyModal} />  
+                            <ShopCard card={this.props.cards[`${team}Citizen`]} team={team} openBuyModal={this.openBuyModal} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`${team}Soldier`]} team={team} openBuyModal={this.openBuyModal} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`${team}Archer`]} team={team} openBuyModal={this.openBuyModal} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`${team}Horseman`]} team={team} openBuyModal={this.openBuyModal} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`ramSiege`]} team={team} openBuyModal={this.openBuyModal} game={this.props.game} />  
                         </div>
                         <div>
-                            <ShopCard card={this.props.cards[`${team}Hero1`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} />
-                            <ShopCard card={this.props.cards[`${team}Hero2`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} />
-                            <ShopCard card={this.props.cards[`${team}Hero3`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} />
-                            <ShopCard card={this.props.cards[`${team}Hero4`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} />
-                            <ShopCard card={this.props.cards[`${team}Hero5`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} />  
+                            <ShopCard card={this.props.cards[`${team}Hero1`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`${team}Hero2`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`${team}Hero3`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`${team}Hero4`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} game={this.props.game} />
+                            <ShopCard card={this.props.cards[`${team}Hero5`]} team={team} openBuyModal={this.openBuyModal} bought={game.teams[team].bought} game={this.props.game} />  
                         </div>
                     </div>
                 </div>

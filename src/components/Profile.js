@@ -21,7 +21,7 @@ class Profile extends React.Component {
             <div className="profile">
                 <h2>{user.name}'s Profile</h2>
                 <div>Wins: {user.wins} Losses: {user.losses} Win%: {Math.floor(user.wins/(user.wins+user.losses)*100)}%</div>
-                <button onClick={this.logout}>Logout →</button>
+                <button onClick={this.logout} className="nav-button" >Logout →</button>
             </div>
         );
     };

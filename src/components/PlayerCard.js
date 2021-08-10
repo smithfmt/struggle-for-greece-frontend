@@ -16,7 +16,7 @@ class PlayerCard extends React.Component {
                         <div>
                             {this.props.lobby.slots[this.props.id].filled}  
                         </div>
-                        <button onClick={this.props.ready} id={this.props.id} className={`${ready}`}>Ready</button>
+                        <button onClick={this.props.ready} id={this.props.id} className={`player-card-button ${ready}`}>Ready</button>
                     </div>
                 )
             };
@@ -26,7 +26,7 @@ class PlayerCard extends React.Component {
                     Player Name  
                     </div>
                     <button 
-                        className="facebook"
+                        className="facebook player-card-button"
                         id={this.props.id} 
                         onClick={this.props.join}>
                         Join {team}

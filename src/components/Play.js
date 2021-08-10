@@ -5,7 +5,11 @@ import { gsap, CSSPlugin } from "gsap/all";
 import base from "../base";
 import Board from "./Board";
 import Hud from "./Hud";
+import CardList from "./CardList";
 import { shuffle } from "../helpers";
+import { cityCards, delphiHeroes, nav, atkNav, delphiEvents, modifiers } from "../data";
+import { calculateStats, calculateDamage, canCastAbility, castAbility, castTargetAbility, castAbilityOnEvent, moveAbilityModifier, removeCard, calculateIncome, lowerDuration } from "../abilities";
+import PlayerInfo from "./PlayerInfo";
  
 gsap.registerPlugin(CSSPlugin);
 
@@ -15,10 +19,14 @@ class Play extends React.Component {
         game: {},
         movingCard: {},
         selectedCard: {},
+        cardInfo: {},
         canMoveTo: ["nowhere"],
         canAttack: ["nowhere"],
+        canCast: ["nowhere"],
         shopType: "",
-    }
+        cardList: false,
+        playerInfo: false,
+    };
 
     componentDidMount() {
         this.getGame();
@@ -26,16 +34,142 @@ class Play extends React.Component {
             context: this,
             state: "game"
         });
+        window.addEventListener( "mousemove", this.handleMousemove, false );
         this.skipComTurns();
-    }
+    };
 
     componentDidUpdate() {
         this.skipComTurns();
     };
 
     componentWillUnmount() {
+        window.removeEventListener( "mousemove", this.handleMousemove, false );
         base.removeBinding(this.ref);
     };
+
+    timer = null;
+    edgeSize = 50;
+
+	handleMousemove = ( event ) => {
+			var viewportX = event.clientX;
+			var viewportY = event.clientY;
+
+			var viewportWidth = document.documentElement.clientWidth;
+			var viewportHeight = document.documentElement.clientHeight;
+
+			var edgeTop = this.edgeSize;
+			var edgeLeft = this.edgeSize;
+			var edgeBottom = ( viewportHeight - this.edgeSize );
+			var edgeRight = ( viewportWidth - this.edgeSize );
+
+			var isInLeftEdge = ( viewportX < edgeLeft );
+			var isInRightEdge = ( viewportX > edgeRight );
+			var isInTopEdge = ( viewportY < edgeTop );
+			var isInBottomEdge = ( viewportY > edgeBottom );
+
+			if ( ! ( isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge ) ) {
+
+				clearTimeout(this.timer);
+				return;
+			}
+
+			var documentWidth = Math.max(
+				document.body.scrollWidth,
+				document.body.offsetWidth,
+				document.body.clientWidth,
+				document.documentElement.scrollWidth,
+				document.documentElement.offsetWidth,
+				document.documentElement.clientWidth
+			);
+			var documentHeight = Math.max(
+				document.body.scrollHeight,
+				document.body.offsetHeight,
+				document.body.clientHeight,
+				document.documentElement.scrollHeight,
+				document.documentElement.offsetHeight,
+				document.documentElement.clientHeight
+			);
+
+			var maxScrollX = ( documentWidth - viewportWidth );
+			var maxScrollY = ( documentHeight - viewportHeight );
+
+			const checkForWindowScroll = () => {
+
+				clearTimeout(this.timer);
+
+				if ( adjustWindowScroll() ) {
+
+					this.timer = setTimeout( checkForWindowScroll, 10 );
+
+				}
+
+			};
+            
+
+			const adjustWindowScroll = () => {
+
+				var currentScrollX = window.pageXOffset;
+				var currentScrollY = window.pageYOffset;
+
+				var canScrollUp = ( currentScrollY > 0 );
+				var canScrollDown = ( currentScrollY < maxScrollY );
+				var canScrollLeft = ( currentScrollX > 0 );
+				var canScrollRight = ( currentScrollX < maxScrollX );
+
+				var nextScrollX = currentScrollX;
+				var nextScrollY = currentScrollY;
+
+				var maxStep = 20;
+                let intensity;
+				if ( isInLeftEdge && canScrollLeft ) {
+
+					intensity = ( ( edgeLeft - viewportX ) / this.edgeSize );
+
+					nextScrollX = ( nextScrollX - ( maxStep * intensity ) );
+
+				} else if ( isInRightEdge && canScrollRight ) {
+
+					intensity = ( ( viewportX - edgeRight ) / this.edgeSize );
+
+					nextScrollX = ( nextScrollX + ( maxStep * intensity ) );
+
+				}
+
+				if ( isInTopEdge && canScrollUp ) {
+
+					intensity = ( ( edgeTop - viewportY ) / this.edgeSize );
+
+					nextScrollY = ( nextScrollY - ( maxStep * intensity ) );
+
+				} else if ( isInBottomEdge && canScrollDown ) {
+
+					intensity = ( ( viewportY - edgeBottom ) / this.edgeSize );
+
+					nextScrollY = ( nextScrollY + ( maxStep * intensity ) );
+
+				}
+
+				nextScrollX = Math.max( 0, Math.min( maxScrollX, nextScrollX ) );
+				nextScrollY = Math.max( 0, Math.min( maxScrollY, nextScrollY ) );
+
+				if (
+					( nextScrollX !== currentScrollX ) ||
+					( nextScrollY !== currentScrollY )
+					) {
+
+					window.scrollTo( nextScrollX, nextScrollY );
+					return( true );
+
+				} else {
+
+					return( false );
+
+				}
+
+			}
+            checkForWindowScroll();
+
+	};
 
     skipComTurns = () => {
         const game = {...this.state.game};
@@ -44,226 +178,26 @@ class Play extends React.Component {
         if (ComPlayers.includes(game.teams[game.whoTurn].player)) {
             console.log("skipping", game.teams[game.whoTurn].player)
             this.endTurn();
+        } else if (game.dead[game.whoTurn]) {
+            console.log(game.whoTurn, " is dead")
+            this.endTurn();
         };
     };
-
-    cityCards = {  
-        // Citizens
-        athensCitizen : {img : "AthenianCitizen", name : "Athenian Citizen", atk : 0, hp : 1, type :  "athens", text : "Citizen", food : 1, money : 0, desc : "A worker for your city mine and farm", id: "Citizen",},
-        thebesCitizen : {img : "ThebanCitizen", name : "Theban Citizen", atk : 0, hp : 1, type :  "thebes", text : "Citizen", food : 1, money : 0, desc : "A worker for your city mine and farm", id: "Citizen",},
-        spartaCitizen : {img : "SpartanCitizen", name : "Spartan Citizen", atk : 1, hp : 1, type :  "sparta", text : "Citizen", food : 1, money : 0, desc : "A worker for your city mine and farm, can join the battle and fight", id: "Citizen",},
-        troyCitizen : {img : "TrojanCitizen", name : "Trojan Citizen", atk : 0, hp : 1, type :  "troy", text : "Citizen", food : 1, money : 0, desc : "A worker for your city mine and farm", id: "Citizen",},
-        // City
-        athensCity : {img : "Athens", name : "Athens", atk : "", hp : 10, type : "athens", text : "City"},
-        thebesCity : {img : "Thebes", name : "Thebes", atk : "", hp : 10, type : "thebes", text : "City"},
-        spartaCity : {img : "Sparta", name : "Sparta", atk : "", hp : 10, type : "sparta", text : "City"},
-        troyCity : {img : "Troy", name : "Troy", atk : "", hp : 10, type : "troy", text : "City"},
-        // Equipment
-        swordEquip :{img : "Sword", name : "Sword", atk : "+1", hp :"0", type : "equipment", text : "Equipment", food : 0, money : 3, desc : "A sharp sword to strenghthen your units", id: "Equip",},
-        helmetEquip :{img : "Helmet", name : "Helmet", atk : "+1", hp :"+1", type : "equipment", text : "Equipment", food : 0, money : 5, desc : "A tough helmet to strenghthen your units", id: "Equip",},
-        shieldEquip :{img : "Shield", name : "Shield", atk : "0", hp :"+1",  type : "equipment", text : "Equipment", food : 0, money : 3, desc : "A large shield to protect your units", id: "Equip",},
-        cuirassEquip :{img : "Cuirass", name : "Cuirass", atk : "", hp : "", type : "equipment", text : "<strong>+1 Plating</strong>", food : 0, money : 5, desc : "A resiliant cuirass to protect your units, blocks all damage from the next attack against a unit", id: "Equip",},
-        // Extra
-        wallsBuilding : {img : "Walls", name : "Walls", atk : 0, hp : 20, type : "building", text : "Structure", food : 0, money : 15, desc : "Sturdy walls that protect your city from invaders", id: "Building",},
-        wildBoarBeast : {img : "WildBoar", name : "Wild Boar", atk : 1, hp : 1, type : "beast", text : "Beast", desc : "Scary beast roarrr",},
-        // Soldiers
-        athensSoldier : {img : "AthenianHoplite", name : "Athenian Hoplite", atk : 1, hp : 2, type : "athens", text : "Soldier", food : 2, money : 1, desc : "A brave soldier for your army", id: "Soldier",},
-        thebesSoldier : {img : "ThebanHoplite", name : "Theban Hoplite", atk : 1, hp : 2, type : "thebes", text : "Soldier", food : 2, money : 1, desc : "A brave soldier for your army", id: "Soldier",},
-        spartaSoldier : {img : "SpartanHoplite", name : "Spartan Hoplite", atk : 1, hp : 2, type : "sparta", text : "Soldier", food : 2, money : 1, desc : "A brave soldier for your army", id: "Soldier",},
-        troySoldier : {img : "TrojanWarrior", name : "Trojan Warrior", atk : 1, hp : 2, type : "troy", text : "Soldier", food : 2, money : 1, desc : "A brave soldier for your army", id: "Soldier",},
-        // Archers
-        athensArcher : {img : "AthenianArcher", name : "Athenian Archer", atk : 1, hp : 1, type : "athens", text : "Archer", food : 2, money : 2, desc : "A nimble archer for your army", id: "Archer",},
-        thebesArcher : {img : "ThebanArcher", name : "Theban Archer", atk : 1, hp : 1, type : "thebes", text : "Archer", food : 2, money : 2, desc : "A nimble archer for your army", id: "Archer",},
-        spartaArcher : {img : "SpartanArcher", name : "Spartan Archer", atk : 1, hp : 1, type : "sparta", text : "Archer", food : 2, money : 2, desc : "A nimble archer for your army", id: "Archer",},
-        troyArcher : {img : "TrojanArcher", name : "Trojan Archer", atk : 1, hp : 1, type : "troy", text : "Archer", food : 2, money : 2, desc : "A nimble archer for your army", id: "Archer",},
-        // Horsemen
-        athensHorseman : {img : "AthenianHorseman", name : "Athenian Horseman", atk : 2, hp : 3, type : "athens", text : "Cavalry", fontsize : "15px", food : 3, money : 2, desc : "A powerful unit with good damage and high health", id: "Horseman",},
-        thebesHorseman : {img : "ThebanHorseman", name : "Theban Horseman", atk : 2, hp : 3, type : "thebes", text : "Cavalry", food : 3, money : 2, desc : "A powerful unit with good damage and high health", id: "Horseman",},
-        spartaHorseman : {img : "SpartanHorseman", name : "Spartan Horseman", atk : 2, hp : 3, type : "sparta", text : "Cavalry", food : 3, money : 2, desc : "A powerful unit with good damage and high health", id: "Horseman",},
-        troyHorseman : {img : "TrojanHorseman", name : "Trojan Horseman", atk : 2, hp : 3, type : "troy", text : "Cavalry", food : 3, money : 2, desc : "A powerful unit with good damage and high health", id: "Horseman",},
-        // Siege Engines
-        ramSiege : {img : "Ram", name : "Battering Ram", atk : 5, hp : 10, type : "universal", text : "Siege Engine", food : 1, money : 5, desc : "Can only attack city walls, a valuable asset for city raids", id: "Siege",},       
-        trojanHorseSiege : {img : "TrojanHorse", name : "Trojan Horse", atk : 0, hp : 10, type : "universal", text : "Siege Engine", desc : "A unique seige engine that allows your units to directly attack a city, ignoring walls", id: "HorseSiege",},
-        // Heroes
-        athensHero1 : {img : "Theseus", name : "Theseus", atk : 5, hp : 7, type : "athens", text : "Liberator of Athens", food : 15, money : 5, desc : "Reduces damage from incoming attacks by 1", id: "Hero",},
-        athensHero2 : {img : "Pericles", name : "Pericles", atk : 1, hp : 4, type : "athens", text : "Voice of Democracy", food : 10, money : 5, desc : "Increases your citizen capacity by 1, reduces cost of city buildings by 2$", id: "Hero",},
-        athensHero3 : {img : "Alcibiades", name : "Alcibiades", atk : 3, hp : 1, type : "athens", text : "Disloyal", food : 3, money : 1, desc : "Every time Alcibiades dies, he is transferred to the team who killed him", id: "Hero",},
-        athensHero4 : {img : "Hippolytus", name : "Hippolytus", atk : 2, hp : 3, type : "athens", text : "Call of the Wild", food : 6, money : 2, desc : "Each turn Hippolytus can spawn a 1/1 wild boar (max 3) (can't spawn more when in battle)", id: "Hero",},
-        athensHero5 : {img : "Cecrops", name : "Cecrops", atk : 2, hp : 4, type : "athens", text : "Experienced Ruler", food : 7, money : 3, desc : "Increases gold Production and food Production by 1", id: "Hero",},
-        spartaHero1 : {img : "Leonidas", name : "Leonidas", atk : 4, hp : 7, type : "sparta", text : "Spartan Rally", food : 12, money : 3, desc : "All units in the army have +1+1", id: "Hero",},
-        spartaHero2 : {img : "Menelaus", name : "Menelaus", atk : 4, hp : 6, type : "sparta", text : "Duelist", food : 10, money : 2, desc : "Can only be attacked by his opposite, and they can't leave the battlefield", id: "Hero",},
-        spartaHero3 : {img : "Helen", name : "Helen", atk : 1, hp : 5, type : "sparta", text : "Casus Belli", food : 5, money : 1, desc : "You can give Helen to any civilisation; whilst she lives, that civilisation has to fight a civilisation of your choice", id: "Hero",},
-        spartaHero4 : {img : "Brasidas", name : "Brasidas", atk : 3, hp : 4, type : "sparta", text : "Product of the Agoge", food : 8, money : 2, desc : "Producing Soldiers costs  1F 1$", id: "Hero",},
-        spartaHero5 : {img : "Orestes", name : "Orestes", atk : 2, hp : 5, type : "sparta", text : "Vengeful", food : 5, money : 3, desc : "Everytime Orestes is attacked, he deals double his attack back", id: "Hero",},
-        thebesHero1 : {img : "Cadmus", name : "Cadmus", atk : 4, hp : 7, type : "thebes", text : "Founder's Spirit", food : 25, money : 5, desc : "When you buy Cadmus, choose a building of your choice and add it to your city", id: "Hero",},
-        thebesHero2 : {img : "Oedipus", name : "Oedipus", atk : 3, hp : 5, type : "thebes", text : "Ill-Fated", food : 17, money : 3, desc : "Can exchange 3 health to block an event", id: "Hero",},
-        thebesHero3 : {img : "Dionysus", name : "Dionysus", atk : 1, hp : 6, type : "thebes", text : "Festival Rites", food : 17, money : 3, desc : "All citizens work twice as hard (double yields)", id: "Hero",},
-        thebesHero4 : {img : "Tiresias", name : "Tiresias", atk : 0, hp : 3, type : "thebes", text : "Foresight", food : 3, money : 2, desc : "Tiresias can block an event of your choice (he goes to the Underworld)", id: "Hero",},
-        thebesHero5 : {img : "Semele", name : "Semele", atk : 1, hp : 3, type : "thebes", text : "Divine Favour", food : 5, money : 2, desc : "Can use 1 food to heal a target in your city by 1 (once a turn)", id: "Hero",},
-        troyHero1 : {img : "Hector", name : "Hector", atk : 4, hp : 7, type : "troy", text : "Sweeping Attack", food : 5, money : 15, desc : "Hector deals half damage to the two neighbouring cards to the target", id: "Hero",},
-        troyHero2 : {img : "Priam", name : "Priam", atk : 2, hp : 5, type : "troy", text : "Royal Wealth", food : 3, money : 5, desc : "All money Yields +1", id: "Hero",},
-        troyHero3 : {img : "Aeneas", name : "Aeneas", atk : 3, hp : 6, type : "troy", text : "Divine Protection", food : 2, money : 10, desc : "When Aeneas is about to die, he is removed from the battle and returned to his city (1 use)", id: "Hero",},
-        troyHero4 : {img : "Paris", name : "Paris", atk : 3, hp : 4, type : "troy", text : "Master Archer", food : 2, money : 7, desc : "Attacks as an archer", id: "Hero",},
-        troyHero5 : {img : "Hecuba", name : "Hecuba", atk : 1, hp : 3, type : "troy", text : "Royal Influence", food : 1, money : 5, desc : "Can spend 1$ to heal a unit by 1 (once per turn)", id: "Hero",},
+    openCardList = () => {
+        const cardList = true;
+        this.setState({ cardList });
     };
-
-    delphiCards = {
-        // Disasters
-        droughtEvent : {img : "Drought", name : "Drought", atk : "", hp : "", type : "event", text : "Disaster"},
-        earthquakeEvent : {img : "Earthquake", name : "Earthquake", atk : "", hp : "", type : "event", text : "Disaster"},
-        volcanoEvent : {img : "Volcano", name : "Volcano", atk : "", hp : "", type : "event", text : "Disaster"},
-        stormEvent : {img : "Storm", name : "Storm", atk : "", hp : "", type : "event", text : "Disaster"},
-        plagueEvent : {img : "Plague", name : "Plague", atk : "", hp : "", type : "event", text : "Disaster"},
-        raidersEvent : {img : "Raiders", name : "Raiders", atk : "", hp : "", type : "event", text : "Disaster"},
-        raidersSoldier : {img : "Raiders", name : "Raider", atk : 2, hp : 2, type : "event", text : "Warrior"},
-        // Events
-        bountifulHarvestEvent : {img : "BountifulHarvest", name : "Bountiful Harvest", atk : "", hp : "", type : "event", text : "Event"},
-        festivalEvent : {img : "Festival", name : "Festival", atk : "", hp : "", type : "event", text : "Event"},
-        goldenAgeEvent : {img : "GoldenAge", name : "Golden Age", atk : "", hp : "", type : "event", text : "Event"},
-        goldrushEvent : {img : "GoldRush", name : "Gold Rush", atk : "", hp : "", type : "event", text : "Event"},
-        underworldEvent : {img : "Underworld", name : "Open the Underworld", atk : "", hp : "", type : "event", text : "Event", fontsize : "14px"},
-        // Wars
-        pelopWar : {img : "PeloponnesianWar", name : "Peloponnesian War", atk : "", hp : "", type : "war", text : "War"},
-        sicilWar : {img : "SicilianExpedition", name : "Sicilian Expedition", atk : "", hp : "", type : "war", text : "War"},
-        trojanWar : {img : "TrojanWar", name : "Trojan War", atk : "", hp : "", type : "war", text : "War"},
-        leuctraWar : {img : "Leuctra", name : "Battle of Leuctra", atk : "", hp : "", type : "war", text : "War"},
-        // Monsters
-        cyclopsMonster : {img : "Cyclops", name : "Cyclops", atk : 4, hp : 8, type : "monster", text : "Monster"},
-        minotaurMonster : {img : "Minotaur", name : "Minotaur", atk : 5, hp : 5, type : "monster", text : "Monster"},
-        hydraMonster : {img : "Hydra", name : "Hydra", atk : 3, hp : 7, type : "monster", text : "Monster"},
-        medusaMonster : {img : "Medusa", name : "Medusa", atk : 3, hp : 6, type : "monster", text : "Monster"},
-        cretanBullMonster : {img : "CretanBull", name : "Cretan Bull", atk : 2, hp : 6, type : "monster", text : "Monster"},
-        cerberusMonster : {img : "Cerberus", name : "Cerberus", atk : 4, hp : 7, type : "monster", text : "Monster"},
-        chimeraMonster : {img : "Chimera", name : "Chimera", atk : 4, hp : 5, type : "monster", text : "Monster"},
-        nemeanLionMonster : {img : "NemeanLion", name : "Nemean Lion", atk : 4, hp : 3, type : "monster", text : "Thick-Skinned"},
-        fleeceGuardianMonster : {img : "GoldenFleece", name : "Guardian of the Fleece", atk : 3, hp : 7, type : "monster", text : "A Fleecy Prize", fontsize : "14px"},
+    closeCardList = () => {
+        const cardList = false;
+        this.setState({ cardList });
     };
-
-    delphiHeroes = {
-        // Heroes
-        delphiHero1 : {img : "Heracles", name : "Heracles", atk : 6, hp : 9, type : "universal", text : "Destroyer of Cities", money : 20, food : 0, desc : "Deals full damage to walls"},
-        delphiHero2 : {img : "Perseus", name : "Perseus", atk : 4, hp : 8, type : "universal", text : "Medusa's Gaze", money : 18, food : 0, desc : "Perseus reveals Medusa's head, reducing all enemies' health by 1 and preventing them from attacking next turn (once every 5 turns)"},
-        delphiHero3 : {img : "Achilles", name : "Achilles", atk : 3, hp : 9, type : "universal", text : "Unrelenting Rage", money : 20, food : 0, desc : "Every time Achilles loses HP, his attack increases by that much, healing reverses this"},
-        delphiHero4 : {img : "Jason", name : "Jason", atk : 3, hp : 5, type : "universal", text : "Heroic Connections", money : 12, food : 0, desc : "Recruiting heroes is 2$ cheaper"},
-        delphiHero5 : {img : "Odysseus", name : "Odysseus", atk : 3, hp : 6, type : "universal", text : "Quick Witted", money : 12, food : 0, desc : "Can create a Trojan Horse Seige Engine for 2$ that allows units to bypass walls and attack the city itself"},
-        delphiHero6 : {img : "Diomedes", name : "Diomedes", atk : 4, hp : 6, type : "universal", text : "Battle Hunger", money : 15, food : 0, desc : "Diomedes takes 1 less damage from non heroes"},
-        delphiHero7 : {img : "Ajax", name : "Ajax", atk : 5, hp : 8, type : "universal", text : "Bulwark", money : 18, food : 0, desc : "Ajax's neighboring cards have +0+3"},
-        delphiHero8 : {img : "Minos", name : "Minos", atk : 3, hp : 5, type : "universal", text : "Royal Guard", money : 14, food : 0, desc : "Hiring Minos gives you 2 soldiers, 2 archers and a horseman"},
-        delphiHero9 : {img : "Nestor", name : "Nestor", atk : 2, hp : 5, type : "universal", text : "Age-old Wisdom", money : 10, food : 0, desc : "Reduces effect of all disasters by 50%"},
-        delphiHero10 : {img : "Atalanta", name : "Atalanta", atk : 3, hp : 3, type : "universal", text : "Swift-footed", money : 8, food : 0, desc : "Atalanta can attack straight away when entering a battlefield and attacks like an archer"},
-        delphiHero11 : {img : "Medea", name : "Medea", atk : 1, hp : 5, type : "universal", text : "Nullify", money : 12, food : 0, desc : "Causes a target to lose 2-2 (can be used once a battle)"},
-        delphiHero12 : {img : "Ariadne", name : "Ariadne", atk : 1, hp : 3, type : "universal", text : "Loyal Companion", money : 8, food : 0, desc : "Can use one food to heal a unit by one (once a turn)"},
-        delphiHero13 : {img : "Hippolyta", name : "Hippolyta", atk : 4, hp : 3, type : "universal", text : "Master Huntress", money : 12, food : 0, desc : "Attacks as an archer, can spawn a wild boar companion every battle"},
-        delphiHero14 : {img : "Penelope", name : "Penelope", atk : 1, hp : 3, type : "universal", text : "Faithful", money : 8, food : 0, desc : "Can use one food to heal a unit by one (once a turn)"},
-        delphiHero15 : {img : "Meleager", name : "Meleager", atk : 4, hp : 4, type : "universal", text : "Hunter's Instinct", money : 12, food : 0, desc : "Takes one less damage from units with less attack than him"},
-        delphiHero16 : {img : "Bellerophon", name : "Bellerophon", atk : 4, hp : 2, type : "universal", text : "Monster Hunter", money : 8, food : 0, desc : "Bellerophon cannot be damaged by monsters"},
-        delphiHero17 : {img : "Daedalus", name : "Daedalus", atk : 1, hp : 4, type : "universal", text : "Master Craftsman", money : 12, food : 0, desc : "Can give a target unit a random piece of equipment for 2$ (once a turn)"},    
-        delphiHero18 : {img : "Pandora", name : "Pandora", atk : 1, hp : 3, type : "universal", text : "Chaotic Curiosity", money : 6, food : 0, desc : "Pandora can activate the next event card all heroes in between are put at the bottom of the event pile, and the event affects a random city (50% for other cities; 50% for her own) (one use)"}, 
-        delphiHero19 : {img : "Cassandra", name : "Cassandra", atk : 1, hp : 3, type : "universal", text : "Cursed Prophecy", money : 6, food : 0, desc : "You can block an event from happening to you, but the last two events are shuffled back into the event pile (Can only be used every other event)"}, 
-        delphiHero20 : {img : "Neoptolemus", name : "Neoptolemus", atk : 1, hp : 5, type : "universal", text : "His Father's Rage", money :10, food : 0, desc : "His attack doubles everytime he attacks"}, 
-        delphiHero21 : {img : "Clytemnestra", name : "Clytemnestra", atk : 2, hp : 3, type : "universal", text : "10 Year Grudge", money : 8, food : 0, desc : "You can use X food/money to add X to clytemnestra's attack for a single hit against a hero"}, 
-        delphiHero22 : {img : "Orpheus", name : "Orpheus", atk : 1, hp : 3, type : "universal", text : "Master of Music", money : 10, food : 0, desc : "Orpheus boosts morale, healing all units in his army by 1 (can only be used once per battle)"}, 
-        delphiHero23 : {img : "Patroclus", name : "Patroclus", atk : 2, hp : 5, type : "universal", text : "Brotherly Love", money : 14, food : 0, desc : "Choose a companion for Patroclus: his attack becomes equal to his companion until they dies. If Patroclus dies first, deal two damage to his companion"},
-        delphiHero24 : {img : "Agamemnon", name : "Agamemnon", atk : 3, hp : 6, type : "universal", text : "Leader of the Greeks", money : 14, food : 0, desc : "Gives all soldiers +1+1"},
+    openPlayerInfo = () => {
+        const playerInfo = true;
+        this.setState({ playerInfo });
     };
-
-    board = {
-        athensCity : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t3: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        spartaCity : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t3: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        troyCity : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t3: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        thebesCity : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t3: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        delphi : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t3: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t4: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        left : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        top : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        right : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-        bottom : {
-            t1: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-            t2: {s1: "noCard",s2: "noCard",s3: "noCard",s4: "noCard",s5: "noCard",s6: "noCard"},
-        },
-    };
-
-    nav = {
-        "athensCity-t1": ["top-t2", "left-t1"],
-        "athensCity-t2": ["left-t2"],
-        "athensCity-t3": ["top-t1"],
-        "spartaCity-t1": ["top-t1", "right-t1"],
-        "spartaCity-t2": ["right-t2"],
-        "spartaCity-t3": ["top-t2"],
-        "thebesCity-t1": ["bottom-t1", "right-t2"],
-        "thebesCity-t2": ["right-t1"],
-        "thebesCity-t3": ["bottom-t2"],
-        "troyCity-t1": ["bottom-t2", "left-t2"],
-        "troyCity-t2": ["left-t1"],
-        "troyCity-t3": ["bottom-t1"],
-        "left-t1": ["athensCity-t1", "troyCity-t2", "delphi-t1"],
-        "left-t2": ["troyCity-t1", "athensCity-t2", "delphi-t4"],
-        "top-t1": ["athensCity-t3", "spartaCity-t1", "delphi-t2"],
-        "top-t2": ["spartaCity-t3", "athensCity-t1", "delphi-t1"],
-        "right-t1": ["thebesCity-t3", "spartaCity-t1", "delphi-t2"],
-        "right-t2": ["spartaCity-t3", "thebesCity-t1", "delphi-t3"],
-        "bottom-t1": ["thebesCity-t1", "troyCity-t3", "delphi-t3"],
-        "bottom-t2": ["troyCity-t1", "thebesCity-t3", "delphi-t4"],
-        "delphi-t1": ["top-t2", "left-t1"],
-        "delphi-t2": ["top-t1", "right-t1"],
-        "delphi-t3": ["bottom-t1", "right-t2"],
-        "delphi-t4": ["bottom-t2", "left-t2"],
-    };
-
-    atkNav = {
-        "athensCity-t1": ["athensCity-t2", "athensCity-t3"],
-        "athensCity-t2": ["athensCity-t1", "athensCity-t3", "athensCity"],
-        "athensCity-t3": ["athensCity-t1", "athensCity-t2", "athensCity"],
-        "spartaCity-t1": ["spartaCity-t2", "spartaCity-t3"],
-        "spartaCity-t2": ["spartaCity-t1", "spartaCity-t3", "spartaCity"],
-        "spartaCity-t3": ["spartaCity-t1", "spartaCity-t2", "spartaCity"],
-        "thebesCity-t1": ["thebesCity-t2", "thebesCity-t3"],
-        "thebesCity-t2": ["thebesCity-t1", "thebesCity-t3", "thebesCity"],
-        "thebesCity-t3": ["thebesCity-t1", "thebesCity-t2", "thebesCity"],
-        "troyCity-t1": ["troyCity-t2", "troyCity-t3"],
-        "troyCity-t2": ["troyCity-t1", "troyCity-t3", "troyCity"],
-        "troyCity-t3": ["troyCity-t1", "troyCity-t2", "troyCity"],
-        "delphi-t1": ["delphi-t2", "delphi-t3", "delphi-t4"],
-        "delphi-t2": ["delphi-t1", "delphi-t3", "delphi-t4"],
-        "delphi-t3": ["delphi-t1", "delphi-t2", "delphi-t4"],
-        "delphi-t4": ["delphi-t1", "delphi-t2", "delphi-t3"],
-        "top-t1":["top-t2"],
-        "top-t2":["top-t1"],
-        "left-t1":["left-t2"],
-        "left-t2":["left-t1"],
-        "right-t1":["right-t2"],
-        "right-t2":["right-t1"],
-        "bottom-t1":["bottom-t2"],
-        "bottom-t2":["bottom-t1"],
+    closePlayerInfo = () => {
+        const playerInfo = false;
+        this.setState({ playerInfo });
     };
 
     getGame = async () => {
@@ -315,43 +249,216 @@ class Play extends React.Component {
             game.teams[team].food = 200;
             game.teams[team].foodIncome = 0;
             game.teams[team].bought = {card: true};
+            game.teams[team].modifiers = {
+                income: {
+                    food: {
+                        multipliers: {
+                            effect: {value: 0},
+                        },
+                        bonuses: {
+                            effect: {value: 0},
+                        }
+                    },
+                    money: {
+                        multipliers: {
+                            effect: {value: 0},
+                        },
+                        bonuses: {
+                            effect: {value: 0},
+                        }
+                    },
+                    both: {
+                        multipliers: {
+                            effect: {value: 0},
+                        },
+                        bonuses: {
+                            effect: {value: 0},
+                        }
+                    }
+                },
+                discount: {
+                    soldiers: {
+                        int: {
+                            effect: {value: 0}
+                        }
+                    },
+                    buildings: {
+                        int: {
+                            effect: {value: 0}
+                        },
+                        multiplier: {
+                            effect: {value: 0}
+                        }
+                    },
+                    heroes: {
+                        int: {
+                            effect: {value: 0}
+                        }
+                    },
+                    walls: {
+                        int: {
+                            effect: {value: 0}
+                        }
+                    },
+                },
+                attack: {
+                    slot: {
+                        effect: {
+                            damageReduction: {
+                                multiplier: 0,
+                                int: 0,
+                            },
+                            returnDamage: {
+                                multiplier: 0,
+                                int: 0,
+                            },
+                        },
+                    },
+                },
+                event: {
+                    disaster: {
+                        effect: {
+                            multiplier: 0,
+                        },
+                    },
+                },
+                position: {
+                    battlefield: {
+                        effect: {
+                            battlefield: "none",
+                            atk: 0,
+                            hp: 0,
+                        },
+                    },
+                    slot: {
+                        effect: {
+                            slot: ["none"],
+                            atk: 0,
+                            hp: 0,
+                        },
+                    },
+                },
+            };
         });
         const cities = ["athens", "sparta", "thebes", "troy"];
         const rndInt = randomNum(4)-1;
         game.whoTurn = cities[rndInt];
         game.order = [...cities.slice(rndInt), ...cities.slice(0, rndInt)];
-        game.board = this.board;
         game.cards = {
-            athensCity : {img : "Athens", name : "Athens", atk : "", hp : "", type : "athens", text : "City", cityHealth: 10,},
-            thebesCity : {img : "Thebes", name : "Thebes", atk : "", hp : "", type : "thebes", text : "City", cityHealth: 10,},
-            spartaCity : {img : "Sparta", name : "Sparta", atk : "", hp : "", type : "sparta", text : "City", cityHealth: 10,},
-            troyCity : {img : "Troy", name : "Troy", atk : "", hp : "", type : "troy", text : "City", cityHealth: 10,},
+            athensCity : {img : "Athens", name : "Athens", atk : "", hp : "", type : "athens", text : "City", cityHealth: 10, walls: false, desc: "Athens starts at city level 2 and walls are 5 money cheaper"},
+            thebesCity : {img : "Thebes", name : "Thebes", atk : "", hp : "", type : "thebes", text : "City", cityHealth: 10, walls: false, desc: "Thebes can hire heroes for 3 money less"},
+            spartaCity : {img : "Sparta", name : "Sparta", atk : "", hp : "", type : "sparta", text : "City", cityHealth: 10, walls: false, desc: "Sparta starts with a barracks and their citizens can fight in battle"},
+            troyCity : {img : "Troy", name : "Troy", atk : "", hp : "", type : "troy", text : "City", cityHealth: 10, walls: false, desc: "Troy starts with 10 money"},
         };
         game.cardID = 0;
-        game.delphiHeroes = shuffle(Object.keys(this.delphiHeroes));
+        game.delphiHeroes = shuffle(Object.keys(delphiHeroes));
+        game.delphiEvents = shuffle(Object.keys(delphiEvents));
         game.delphi = {hero1: false, hero2: false};
         game.heroHire = false;
+        game.event = false;
+        game.dead={athens:false, sparta:false, thebes:false, troy:false};
+        // Perks //
+        game.teams.athens.level = 2;
+        game.teams.athens.modifiers.discount.walls.int.athensCity = {
+            duration: 1000,
+            value: 5,
+            card: "athensCity",
+        };
+        game.teams.sparta.buildings.barracks = true;
+        game.teams.thebes.modifiers.discount.heroes.int.thebesCity = {
+            duration: 1000,
+            value: 3,
+            card: "thebesCity",
+        };
+        game.teams.troy.money = game.teams.troy.money + 10;
+        ///////////
         delete game.slots;
         delete game.readyCount;
         delete game.started;
         delete game.playerCount;
         this.setState({ game });
         this.props.openGame(game);
-    }
+    };
 
-    endTurn = () => {
-        const game = {...this.state.game};
-        const team = game.whoTurn;
-        game.teams[team].food = game.teams[team].food+game.teams[team].foodIncome;
-        game.teams[team].money = game.teams[team].money+game.teams[team].moneyIncome;
-        let nextTurn = game.order.indexOf(game.whoTurn)+1;
-        if (nextTurn===4) {nextTurn = 0};
-        game.whoTurn = game.order[nextTurn];
-        game.heroHire = false;
+    calculateModStats = (cardSlot, game, attacking) => {
+        let card = game.cards[cardSlot];
+        if (card.text==="City") return game;
+        const mods = game.teams[card.type].modifiers.position;
+        const battlefield = cardSlot.split("-s")[0];
+        let bfMods = Object.keys(mods.battlefield).filter(eff => eff!=="effect" && mods.battlefield[eff].battlefield===battlefield);
+        bfMods = bfMods.filter(eff => !modifiers[eff].effect.mod.effects || modifiers[eff].effect.mod.effects===card.id);
+        const bfAtk = bfMods.map(mod => {return mods.battlefield[mod]}).reduce((acc, {atk}) => atk + acc, 0);
+        const bfHp = bfMods.map(mod => {return mods.battlefield[mod]}).reduce((acc, {hp}) => hp + acc, 0);
+        const slotMods = Object.keys(mods.slot).filter(eff => eff!=="effect" && mods.slot[eff].slot.includes(cardSlot));
+        const slotAtk = slotMods.map(mod => {return mods.slot[mod]}).reduce((acc, {atk}) => atk + acc, 0);
+        const slotHp = slotMods.map(mod => {return mods.slot[mod]}).reduce((acc, {hp}) => hp + acc, 0);
+        card.modAtk = card.atk + bfAtk + slotAtk;
+        card.modHp = card.hp + bfHp + slotHp;
+        if (attacking!=="attacking" && card.modHp<1 && card.text!=="City") {
+            game = removeCard(game, cardSlot);
+        };
+        return game;
+    };
+
+    calculateTeamModStats = (team) => {
+        let game = {...this.state.game};
         const cards = game.cards;
-        Object.keys(cards).forEach(c => cards[c].moved=false);
-        this.setState({ game });
-    }
+        Object.keys(cards).filter(card => cards[card] && cards[card].type === team).forEach(c => {
+            if (cards[c]!==null) {
+                game = this.calculateModStats(c, game);
+            };
+        });
+        return game;
+    };
+
+    attackCard = (attackedSlot) => {
+        if (!this.state.selectedCard) return;
+        let attackingCard = this.state.selectedCard;
+        attackingCard.attacked=attackingCard.attacked +1 || 1;
+        let game = {...this.state.game};
+        const cards = game.cards;
+        const attackingSlot = Object.keys(cards).filter(card => cards[card]===attackingCard)[0];
+        let attackedCard = cards[attackedSlot];
+        if (attackedCard.text==="City") {
+            if (attackedCard.walls>0 && attackingCard.atk>0) {
+                if (attackingCard.name==="Battering Ram") {
+                    attackedCard.walls = attackedCard.walls - 2;
+                    if (attackedCard.walls<1) {
+                        attackedCard.walls=0;
+                    };
+                };
+                if (attackingCard.name==="Heracles") {
+                    attackedCard.walls = attackedCard.walls-attackingCard.atk;
+                } else {
+                    attackedCard.walls = attackedCard.walls-1;
+                };
+            } else {
+                attackedCard.cityHealth = attackedCard.cityHealth - attackingCard.atk;
+                if (attackedCard.cityHealth<1) {
+                    game.dead[attackedCard.type] = true;
+                };
+            };
+        } else {
+            [attackedCard, attackingCard] = calculateDamage([attackedCard, attackingCard]);
+            attackedCard = calculateStats(attackedCard);
+            game.cards[attackingSlot] = calculateStats(attackingCard);
+            game = this.calculateModStats(attackedSlot, game, "attacking");
+            game = this.calculateModStats(attackingSlot, game, "attacking");
+            if (attackedCard.modHp < 1) {
+                game = removeCard(game, attackedSlot, attackingCard.type);
+            };
+            if (attackingCard.modHp < 1) {
+                game = removeCard(game, attackingSlot, attackedCard.type);
+            };
+        };
+        attackingCard.moved = true;
+        const canMoveTo = ["nowhere"];
+        const canAttack = ["nowhere"];
+        const canCast = ["nowhere"];
+        const selectedCard = {};
+        game = this.calculateTeamModStats(game.whoTurn);
+        this.setState({ game, selectedCard, canMoveTo, canAttack, canCast });
+    };
 
     buyingCard = (card) => {
         const game = {...this.state.game};
@@ -359,18 +466,26 @@ class Play extends React.Component {
         const canPlace = {city: `${card.type}-city`, citizen: card.text};
         const movingCard = {card, canPlace};
         const team = game.whoTurn;
-        game.teams[team].food = game.teams[team].food-card.food;
-        game.teams[team].money = game.teams[team].money-card.money;
+        let foodCost = card.food;
+        let moneyCost = card.money;
+        if (card.id==="Hero") {
+            moneyCost = card.money - Object.values(game.teams[team].modifiers.discount.heroes.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0);
+        };
+        if (card.id==="Soldier") {
+            foodCost = card.food - Object.values(game.teams[team].modifiers.discount.soldiers.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0);
+        };
+        game.teams[team].food = game.teams[team].food-foodCost;
+        game.teams[team].money = game.teams[team].money-moneyCost;
         this.setState({ movingCard, game });
-    }
+    };
 
     updateTeam = (team, city) => {
         const game = {...this.state.game};
         game.teams[city] = team;
         this.setState({ game });
-    }
+    };
 
-    moveMovingCard = (e) => {
+    moveMovingCard = (e) => { 
         const movingCardDiv = document.querySelector(".moving-card");
         if (!movingCardDiv.firstElementChild) return;
         TweenLite.to(movingCardDiv, 0.1, {
@@ -382,16 +497,61 @@ class Play extends React.Component {
     };
 
     placeCard = (cardSlot) => {
-        const id = cardSlot.id.split("-");
         const card = {...this.state.movingCard.card};
-        const game = {...this.state.game};
+        let game = {...this.state.game};
         const team = game.whoTurn;
         game.teams[team].bought[card.name] = true;
         game.cards[cardSlot.id] = JSON.parse(JSON.stringify(card));
-        game.board[id[0]][id[1]][id[2]]=game.cards[cardSlot.id];
+        let modifier = card.onPlace;
+        let modEffect;
+        if (modifier) {
+            modEffect = modifiers[modifier];
+            if (modEffect.type === "income") {
+                game.teams[team].modifiers[modEffect.type][modEffect.resource][modEffect.extent][modEffect.effect.name] = modEffect.effect.mod;
+                game= calculateIncome(game, team);
+            };
+            if (modEffect.type === "discount") {
+                game.teams[team].modifiers[modEffect.type][modEffect.discounts][modEffect.extent][modEffect.effect.name] = modEffect.effect.mod;
+            };
+        };
+        if (card.name==="Pericles") {
+            game.teams[team].level++;
+            game.teams[team].pericles = true;
+        };
+        modifier = card.atkMod;        
+        if (modifier) {
+            modEffect = modifiers[modifier];
+            game.teams[team].modifiers.attack[cardSlot.id] = modEffect;
+        };
+        modifier = card.slotModifier;
+        if (modifier) {
+            modEffect = modifiers[modifier];
+            game.teams[team].modifiers.position[modEffect.extent][modEffect.effect.name] = modEffect.effect.mod;
+            switch (modEffect.effects) {
+                case "allies":
+                    game.teams[team].modifiers.position[modEffect.extent][modEffect.effect.name].battlefield = cardSlot.id.split("-s")[0];
+                    break;
+                case "neighbours":
+                    const length = cardSlot.id.length-1;
+                    const pos = parseInt(cardSlot.id[length]);
+                    const biggerSlot = `${cardSlot.id.substring(0, length)}${pos+1}`;
+                    const smallerSlot = `${cardSlot.id.substring(0, length)}${pos-1}`;
+                    if (pos!==6||1) {
+                        game.teams[team].modifiers.position[modEffect.extent][modEffect.effect.name].slot = [biggerSlot, smallerSlot];
+                    } else if (pos===1) {
+                        game.teams[team].modifiers.position[modEffect.extent][modEffect.effect.name].slot = [biggerSlot]
+                    } else if (pos===6) {
+                        game.teams[team].modifiers.position[modEffect.extent][modEffect.effect.name].slot = [smallerSlot]
+                    };
+                    break;
+                default:
+                    break;
+            };
+        };
+        game = this.calculateTeamModStats(team);
         const movingCard = {};
         this.setState({ game, movingCard });
-    }
+    };
 
     placeCitizen = () => {
         const movingCard = {};
@@ -419,46 +579,25 @@ class Play extends React.Component {
         if (card.id==="Citizen") {
             CitizenCard = "Citizen";
         };
-        const canMoveTo = [...this.nav[currentBattlefield], CitizenCard];
-        const canAttack = this.atkNav[currentBattlefield];
+        const canMoveTo = [...nav[currentBattlefield], CitizenCard];
+        const canAttack = atkNav[currentBattlefield];
         this.setState({ selectedCard, canMoveTo, canAttack });
     };
 
     moveCard = (newSlot) => {
         const card = this.state.selectedCard;
-        const game = {...this.state.game};
+        let game = {...this.state.game};
         const cards = game.cards;
         const canMoveTo = ["nowhere"];
-        card.moved = true;
+        if (!card.charge && card) {card.moved = true};
         cards[newSlot] = card;
         cards[Object.keys(cards).filter(c => {return cards[c]===card})[0]] = null;
         const selectedCard = {};
-        this.setState({ game, selectedCard, canMoveTo });
-    };
-
-    attackCard = (attackedSlot) => {
-        if (!this.state.selectedCard) return;
-        const attackingCard = this.state.selectedCard;
-        const game = {...this.state.game};
-        const cards = game.cards;
-        const attackedCard = cards[attackedSlot];
-        if (attackedCard.text==="City") {
-            attackedCard.cityHealth = attackedCard.cityHealth - attackingCard.atk;
-        } else {
-            attackingCard.hp = attackingCard.hp - attackedCard.atk;
-            attackedCard.hp = attackedCard.hp - attackingCard.atk;
-            if (attackedCard.hp < 1) {
-                cards[Object.keys(cards).filter(c => {return cards[c]===attackedCard})[0]] = null;
-            };
-            if (attackingCard.hp < 1) {
-                cards[Object.keys(cards).filter(c => {return cards[c]===attackingCard})[0]] = null;
-            };
+        if (card.slotModifier) {
+            game = moveAbilityModifier(card, game, newSlot);
         };
-        attackingCard.moved = true;
-        const canMoveTo = ["nowhere"];
-        const canAttack = ["nowhere"];
-        const selectedCard = {};
-        this.setState({ game, selectedCard, canMoveTo, canAttack });
+        game = this.calculateTeamModStats(game.whoTurn);
+        this.setState({ game, selectedCard, canMoveTo });
     };
 
     openCityShop = (shop) => {
@@ -485,8 +624,25 @@ class Play extends React.Component {
     buyBuilding = (t, building, cost) => {
         const game = {...this.state.game};
         const team = game.teams[t];
+        if (building==="walls") {
+            game.cards[`${t}City`].walls = 10;
+        };
+        if (team.modifiers.discount.buildings.multiplier.cadmus) {
+            team.modifiers.discount.buildings.multiplier.cadmus = null;
+        };
         team.buildings[building] = true;
         team.money = team.money-cost;
+        this.setState({ game });
+    };
+
+    setInfoState = (card) => {
+        const cardInfo = {...card};
+        this.setState({ cardInfo });
+    };
+
+    calcIncome = (team) => {
+        let game = {...this.state.game};
+        game = calculateIncome(game, team);
         this.setState({ game });
     };
 
@@ -494,18 +650,117 @@ class Play extends React.Component {
         const game = {...this.state.game};
         const user = JSON.parse(localStorage.getItem("SFGUser"));
         const team = Object.keys(game.teams).filter(t => game.teams[t].player===user.name)[0];
-        if ((game.delphi.hero1 && game.delphi.hero2) || game.heroHire) return;
-        const delphiHeroes = game.delphiHeroes;
+        if ((game.delphi.hero1 && game.delphi.hero2) || game.heroHire || game.whoTurn !== team) return;
+        const heroes = game.delphiHeroes;
         if (!game.delphi.hero1) {
-            game.delphi.hero1 = JSON.parse(JSON.stringify(this.delphiHeroes[delphiHeroes[0]]));
-            game.delphiHeroes = [...delphiHeroes].slice(1);
+            game.delphi.hero1 = JSON.parse(JSON.stringify(delphiHeroes[heroes[0]]));
+            game.delphiHeroes = [...heroes].slice(1);
         } else if (!game.delphi.hero2) {
-            game.delphi.hero2 = JSON.parse(JSON.stringify(this.delphiHeroes[delphiHeroes[0]]));
-            game.delphiHeroes = [...delphiHeroes].slice(1);
+            game.delphi.hero2 = JSON.parse(JSON.stringify(delphiHeroes[heroes[0]]));
+            game.delphiHeroes = [...heroes].slice(1);
         };
         game.heroHire = true;
         game.teams[team].money--;
         this.setState({ game });
+    };
+
+    consultOracle = () => {
+        let game = {...this.state.game};
+        const user = JSON.parse(localStorage.getItem("SFGUser"));
+        const team = Object.keys(game.teams).filter(t => game.teams[t].player===user.name)[0];
+        if (game.event || team !== game.whoTurn) return;
+        const events = game.delphiEvents;
+        const eventName = events[0];
+        const event = JSON.parse(JSON.stringify(delphiEvents[eventName]))
+        game.delphiEvents = [...events.slice(1), eventName];
+        const modifier = modifiers[event.modifier];
+        game.teams[team].modifiers[modifier.type][modifier.resource][modifier.extent][modifier.effect.name] = modifier.effect.mod;
+        game.event = true;
+        game = calculateIncome(game, team);
+        this.setState({ game });
+    };
+
+    abilityButton = () => {
+        let game = {...this.state.game};
+        let selectedCard = {...this.state.selectedCard};
+        game = castAbility(game, selectedCard.ability, selectedCard);
+        selectedCard.cast = true;
+        const canMoveTo = ["nowhere"];
+        const canAttack = ["nowhere"];
+        this.setState({ selectedCard, game, canMoveTo, canAttack });
+    };
+
+    castOnEvent = (event) => {
+        let selectedCard = {...this.state.selectedCard};
+        let game = {...this.state.game};
+        game = castAbilityOnEvent(game, selectedCard, selectedCard.canTarget, event);
+        selectedCard = {};
+        const canMoveTo = ["nowhere"];
+        const canAttack = ["nowhere"];
+        const canCast = ["nowhere"]
+        this.setState({ game, selectedCard, canMoveTo, canAttack, canCast })
+    };
+    
+    canTargetAbility = () => {
+        let selectedCard = {...this.state.selectedCard};
+        let game = {...this.state.game};
+        let canCast;
+        if (this.state.canCast[0]==="nowhere") {
+            canCast = canCastAbility(game, selectedCard, selectedCard.canTarget);
+        } else {
+            canCast = ["nowhere"];
+        };
+        this.setState({ canCast });
+    };
+    
+    castHere = (cardSlot) => {
+        let game = {...this.state.game};
+        let selectedCard = {...this.state.selectedCard};
+        game = castTargetAbility(game, selectedCard, selectedCard.canTarget, cardSlot);
+        selectedCard.cast = true;
+        const canMoveTo = ["nowhere"];
+        const canAttack = ["nowhere"];
+        const canCast = ["nowhere"]
+        this.setState({ selectedCard, game, canMoveTo, canAttack, canCast });
+    };
+
+    endTurn = async () => {
+        let game = {...this.state.game};
+        const team = game.whoTurn;
+        if (!game.dead[team]) {
+            const foodIncome = game.teams[team].foodIncome;
+            const moneyIncome = game.teams[team].moneyIncome;
+            game.teams[team].food = game.teams[team].food+foodIncome;
+            game.teams[team].money = game.teams[team].money+moneyIncome;
+        };
+        let nextTurn = game.order.indexOf(game.whoTurn)+1;
+        if (nextTurn===4) {nextTurn = 0};
+        game.heroHire = false;
+        game.event = false;
+        const cards = game.cards;
+        Object.keys(cards).forEach(c => {
+            cards[c].moved=false;
+            cards[c].cast=false;
+            if (cards[c].cooldown && cards[c].type===game.whoTurn) {
+                cards[c].cooldown = cards[c].cooldown-1;
+            };
+        });
+        const deadTeams = Object.keys(game.dead).filter(t => game.dead[t]);
+        const cardsToDelete = Object.keys(cards).filter(c => cards[c].text!=="City" && deadTeams.includes(cards[c].type));
+        cardsToDelete.forEach(card => {
+            game = removeCard(game, card);
+        });
+        const ComPlayers = ["player 1", "player 2", "player 3"];
+        if (!ComPlayers.includes(game.teams[team].player)) {
+            game = lowerDuration(game, team);
+            game = calculateIncome(game, team);
+        };
+        game.whoTurn = game.order[nextTurn];
+        const canMoveTo = ["nowhere"];
+        const canAttack = ["nowhere"];
+        const canCast = ["nowhere"];
+        const selectedCard = {};
+        this.setState({ game, canMoveTo, canAttack, canCast, selectedCard });
     };
     
     cardSlotProps = {
@@ -513,10 +768,23 @@ class Play extends React.Component {
         showMoves: (card, cardSlot) => this.showMoves(card, cardSlot),
         moveCard: (newSlot) => this.moveCard(newSlot),
         attackCard: (attackedSlot) => this.attackCard(attackedSlot),
+        setInfoState: (card) => this.setInfoState(card),
+        castHere: (cardSlot) => this.castHere(cardSlot),
     };
 
     render() {
-        
+
+        if (this.state.playerInfo) return (
+            <PlayerInfo 
+                game={this.state.game}
+                closePlayerInfo={this.closePlayerInfo}
+            />
+        );
+        if (this.state.cardList) return (
+            <CardList 
+                closeCardList={this.closeCardList}
+            />
+        );
         return (
             <>
             <Board 
@@ -532,19 +800,32 @@ class Play extends React.Component {
                 selectedCard={this.state.selectedCard}
                 canMoveTo={this.state.canMoveTo}
                 canAttack={this.state.canAttack}
-                delphiHeroCards={this.delphiHeroes}
+                canCast={this.state.canCast}
+                delphiHeroCards={delphiHeroes}
                 heroForHire={this.heroForHire}
+                consultOracle={this.consultOracle}
                 buyingCard={this.buyingCard}
+                calculateIncome={this.calcIncome}
+                openCardList={this.openCardList}
+                openPlayerInfo={this.openPlayerInfo}
             />
             <Hud 
+                cards={cityCards}
                 game={this.state.game} 
-                cards={this.cityCards}
+                cardInfo={this.state.cardInfo}
+                shopType={this.state.shopType}
                 endTurn={this.endTurn}
                 buyingCard={this.buyingCard}
-                shopType={this.state.shopType}
                 closeCityShop={this.closeCityShop}
                 upLevel={this.upLevel}
                 buyBuilding={this.buyBuilding}
+                setInfoState={this.setInfoState}
+                delphiEvents={delphiEvents}
+                selectedCard={this.state.selectedCard}
+                abilityButton={this.abilityButton}
+                canTargetAbility={this.canTargetAbility}
+                canCast={this.state.canCast}
+                castOnEvent={this.castOnEvent}
             />
             </>
         )};

@@ -21,145 +21,46 @@ class Battlefield2 extends React.Component {
         if (this.props.canAttack && this.props.canAttack.includes(`${this.props.id}-t2`)) {
             canAttackHere2="can-attack-here";
         };
+        let canCastHere1="";
+        if (this.props.canCast && this.props.canCast.includes(`${this.props.id}-t1`)) {
+            canCastHere1="can-cast-here";
+        };
+        let canCastHere2="";
+        if (this.props.canCast && this.props.canCast.includes(`${this.props.id}-t2`)) {
+            canCastHere2="can-cast-here";
+        };
         return (
             <div className={`battlefield-container-${this.props.pos}`}>
                 <div className={`battlefield2-t1`}>
+                    {["-s1","-s2","-s3","-s4","-s5","-s6"].map(id => {return (
                         <CardSlot 
-                        id={`${this.props.id}-t1-s1`} 
+                        id={`${this.props.id}-t1${id}`} 
                         canMoveHere={canMoveHere1} 
                         canAttackHere={canAttackHere1}
+                        canCastHere={canCastHere1}
                         cardSlotProps={this.props.cardSlotProps} 
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
+                        key={`${this.props.id}-t1${id}`}
                         />
-                        <CardSlot 
-                        id={`${this.props.id}-t1-s2`} 
-                        canMoveHere={canMoveHere1} 
-                        canAttackHere={canAttackHere1}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />
-                        <CardSlot 
-                        id={`${this.props.id}-t1-s3`} 
-                        canMoveHere={canMoveHere1} 
-                        canAttackHere={canAttackHere1}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />   
-                        <CardSlot 
-                        id={`${this.props.id}-t1-s4`} 
-                        canMoveHere={canMoveHere1} 
-                        canAttackHere={canAttackHere1}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />
-                        <div className="empty"></div>  
-                        <CardSlot 
-                        id={`${this.props.id}-t1-s5`} 
-                        canMoveHere={canMoveHere1} 
-                        canAttackHere={canAttackHere1}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />
-                        <CardSlot 
-                        id={`${this.props.id}-t1-s6`} 
-                        canMoveHere={canMoveHere1} 
-                        canAttackHere={canAttackHere1}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />  
+                    )})}
                 </div>
                 <div className={`battlefield2-t2`}>
+                    {["-s1","-s2","-s3","-s4","-s5","-s6"].map(id => {return (
                         <CardSlot 
-                        id={`${this.props.id}-t2-s1`} 
+                        id={`${this.props.id}-t2${id}`} 
                         canMoveHere={canMoveHere2} 
                         canAttackHere={canAttackHere2}
+                        canCastHere={canCastHere2}
                         cardSlotProps={this.props.cardSlotProps} 
                         movingCard={this.props.movingCard}
                         cards={this.props.cards}
                         selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
+                        key={`${this.props.id}-t2${id}`}
                         />
-                        <CardSlot 
-                        id={`${this.props.id}-t2-s2`} 
-                        canMoveHere={canMoveHere2} 
-                        canAttackHere={canAttackHere2}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />
-                        <CardSlot 
-                        id={`${this.props.id}-t2-s3`} 
-                        canMoveHere={canMoveHere2} 
-                        canAttackHere={canAttackHere2}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />
-                        <CardSlot 
-                        id={`${this.props.id}-t2-s4`} 
-                        canMoveHere={canMoveHere2} 
-                        canAttackHere={canAttackHere2}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />  
-                        <div className="empty"></div>  
-                        <CardSlot 
-                        id={`${this.props.id}-t2-s5`} 
-                        canMoveHere={canMoveHere2} 
-                        canAttackHere={canAttackHere2}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        />
-                        <CardSlot 
-                        id={`${this.props.id}-t2-s6`} 
-                        canMoveHere={canMoveHere2} 
-                        canAttackHere={canAttackHere2}
-                        cardSlotProps={this.props.cardSlotProps} 
-                        movingCard={this.props.movingCard}
-                        cards={this.props.cards}
-                        selectedCard={this.props.selectedCard}
-                        canMoveTo={this.props.canMoveTo}
-                        canAttack={this.props.canAttack}
-                        /> 
+                    )})}
+                        
                 </div>
             </div>
         )

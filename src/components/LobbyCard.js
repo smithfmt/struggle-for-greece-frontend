@@ -16,6 +16,7 @@ class LobbyCard extends React.Component {
                 <button onClick={this.handleJoin}>
                     Join Lobby
                 </button>
+                <div className="card-divider"></div>
             </div>
         );
     };

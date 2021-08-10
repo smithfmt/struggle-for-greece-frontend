@@ -58,6 +58,10 @@ class Delphi extends React.Component {
         if (!this.state.isInDelphi) return;
         this.props.heroForHire();
     };
+    consultOracle = () => {
+        if (!this.state.isInDelphi) return;
+        this.props.consultOracle();
+    };
 
     render() {
         const game = this.props.game;
@@ -75,6 +79,7 @@ class Delphi extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
                 />
                 <DelphiBattlefield 
                 pos="troy" 
@@ -85,6 +90,7 @@ class Delphi extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
                 />
                 <DelphiBattlefield 
                 pos="athens" 
@@ -95,6 +101,7 @@ class Delphi extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
                 />
                 <DelphiBattlefield 
                 pos="thebes" 
@@ -105,6 +112,7 @@ class Delphi extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
                 />
                 <div className="hero-hire">
                     <PurchaseCard 
@@ -121,19 +129,20 @@ class Delphi extends React.Component {
                     id="hero1"
                     card={game.delphi.hero1}
                     openBuyModal={this.openBuyModal}
+                    game={this.props.game}
                     />
                     <HeroShopCard
                     id="hero2"
                     card={game.delphi.hero2}
                     openBuyModal={this.openBuyModal}
+                    game={this.props.game}
                     />
                 </div>
                 <div className="delphi-temple">
                    <button onClick={this.heroForHire} className="delphi-hero-button">Hero Hire</button>
                    <div className="delphi-temple-center">
-                       Delphi
                    </div>
-                   <button className="delphi-oracle-button">Consult the Oracle</button> 
+                   <button onClick={this.consultOracle} className="delphi-oracle-button">Consult the Oracle</button> 
                 </div>
             </div>
         )

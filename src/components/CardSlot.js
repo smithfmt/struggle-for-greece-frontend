@@ -15,6 +15,9 @@ class CardSlot extends React.Component {
     attackHere = () => {
         this.props.cardSlotProps.attackCard(this.props.id);
     };
+    castHere = () => {
+        this.props.cardSlotProps.castHere(this.props.id);
+    };
 
     render() {
         const cardSlotProps = this.props.cardSlotProps;
@@ -27,14 +30,27 @@ class CardSlot extends React.Component {
         if (!canPlace && !card) {canPlace = ""};
         if (!card) {
             if (canPlace) return (
-                <div onClick={this.place} className={`card-slot ${canPlace}`} id={this.props.id}>Card</div>
+                <div onClick={this.place} className={`card-slot ${canPlace}`} id={this.props.id}></div>
             );
             if (this.props.canMoveHere) return (
-                <div onClick={this.moveHere} className={`card-slot ${canPlace} ${this.props.canMoveHere}`} id={this.props.id}>Card</div>
+                <div onClick={this.moveHere} className={`card-slot ${canPlace} ${this.props.canMoveHere}`} id={this.props.id}></div>
             );
             return (
-                <div className={`card-slot`} id={this.props.id}>Card</div>
+                <div className={`card-slot`} id={this.props.id}></div>
         )};
+        if (this.props.canCastHere) return (
+            <div onClick={this.castHere} className={`card-slot ${selected} ${this.props.canCastHere}`} id={this.props.id}>
+                <Card 
+                card={card}
+                team={card.type}
+                showMoves={cardSlotProps.showMoves}
+                id={this.props.id}
+                type={"boardCard"}
+                openCityShop={this.props.openCityShop}
+                game={this.props.game}
+                />
+            </div>
+        );
         if (this.props.canAttackHere) return (
             <div onClick={this.attackHere}className={`card-slot ${selected} ${this.props.canAttackHere}`} id={this.props.id}>
                 <Card 
@@ -48,8 +64,9 @@ class CardSlot extends React.Component {
                 />
             </div>
         );
+
         return (
-            <div className={`card-slot ${selected} ${this.props.canAttackHere}`} id={this.props.id}>
+            <div className={`card-slot ${selected}`} id={this.props.id}>
                 <Card 
                 card={card}
                 team={card.type}
@@ -58,6 +75,7 @@ class CardSlot extends React.Component {
                 type={"boardCard"}
                 openCityShop={this.props.openCityShop}
                 game={this.props.game}
+                setInfoState={cardSlotProps.setInfoState}
                 />
             </div>
         );

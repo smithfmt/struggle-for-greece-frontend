@@ -9,6 +9,22 @@
     left: 0%;
     padding: 5rem;
   }
+.board-map-image {
+  position: absolute;
+  left: 0%;
+  top: 5%;
+  width: 99.7%;
+  height: 94.5%;
+  object-fit: fill;
+  }
+.background-trees {
+  position: fixed;
+  left: 0%;
+  top: 0%;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
 .athens-city {
     position: absolute;
     left: 0%;
@@ -101,8 +117,6 @@
     align-items: center;
     width: 6rem;
     height: 7rem;
-    border: 2px solid rgba(41, 41, 41, 0.1);
-    background-color: rgba(41, 41, 41, 0.068)
   }
   
   .athens-city-container {
@@ -113,7 +127,6 @@
     top: 5%;
     left: 5%;
     position: absolute;
-    border: black solid 1px;
   }
   .troy-city-container {
     font-size: x-large;
@@ -123,7 +136,6 @@
     bottom: 5%;
     left: 5%;
     position: absolute;
-    border: black solid 1px;
   }
   .thebes-city-container {
     font-size: x-large;
@@ -133,7 +145,6 @@
     bottom: 5%;
     right: 5%;
     position: absolute;
-    border: black solid 1px;
   }
   .sparta-city-container {
     font-size: x-large;
@@ -143,7 +154,6 @@
     top: 5%;
     right: 5%;
     position: absolute;
-    border: black solid 1px;
   }
   
   .city-name {
@@ -241,12 +251,14 @@
   .battlefield2-t1 {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     position: relative;
     margin-bottom: 2rem;
     transform: rotate(180deg);
   }
   .battlefield2-t2 {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     position: relative;
     margin-top: 2rem;
@@ -259,6 +271,7 @@
   .city-battlefield2-d {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     position: relative;
     margin-top: 2rem;
   }
@@ -358,29 +371,44 @@
     position: absolute;
     width: 52%;
     height: 30%;
-    border: black solid 2px;
     left: 25%;
     bottom: 33%;
   }
   .delphi-hero-button {
     position: relative;
     font-size: x-large;
-    background-color: cadetblue;
+    background-color: rgb(77, 77, 77);
+    color: rgb(168, 165, 165);
+    border: rgba(0, 0, 0, 0.671) solid 0.2vw;
+    border-radius: 0.4vw;
     width: 30%;
     height: 25%;
     transform: rotate(90deg);
     top: 38%;
     right: 11%;
+    cursor: pointer;
+  }
+  .delphi-hero-button:hover {
+    background-color: rgb(143, 140, 140);
+    color: rgb(51, 51, 51);
   }
   .delphi-oracle-button {
     position: relative;
     font-size: x-large;
-    background-color: cadetblue;
+    background-color: rgb(77, 77, 77);
+    color: rgb(168, 165, 165);
+    border: rgba(0, 0, 0, 0.671) solid 0.2vw;
+    border-radius: 0.4vw;
     width: 30%;
     height: 35%;
     transform: rotate(270deg);
     bottom: 27%;
     left: 80%;
+    cursor: pointer;
+  }
+  .delphi-oracle-button:hover {
+    background-color: rgb(143, 140, 140);
+    color: rgb(51, 51, 51);
   }
   .delphi-temple-center {
     position: relative;
@@ -397,9 +425,175 @@
   }
 
   .can-place {
-    background-color: rgba(127, 255, 212, 0.459);
+    background-color: rgba(127, 255, 212, 0.664);
+    border: 2px solid rgba(41, 41, 41, 0.1);
+    box-sizing: border-box;
     cursor: pointer;
+  }
+  .can-move-here {
+    background-color: rgba(166, 166, 246, 0.685);
+    border: 2px solid rgba(41, 41, 41, 0.1);
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+  .selected {
+    background-color: rgba(146, 255, 161, 0.616);
+    border: 2px solid rgba(41, 41, 41, 0.1);
+    box-sizing: border-box;
+  }
+  .can-attack-here {
+    background-color: rgba(255, 0, 0, 0.623);
+    border: 2px solid rgba(41, 41, 41, 0.1);
+    box-sizing: border-box;
+  }
+  .can-cast-here {
+    background-color: rgb(48, 45, 241);
+    border: 2px solid rgba(41, 41, 41, 0.1);
+    box-sizing: border-box;
   }
   .citizen-place {
     border: rgba(255, 255, 255, 0.603) solid 0.5rem;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.603);
+  }
+  .wall {
+    position: absolute;
+    height: 31rem;
+    width: 35rem;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .wall.bought {
+    opacity: 1;
+  }
+  .athens-city-wall {
+    left: 6rem;
+    top: 5.2rem;
+  }
+  .sparta-city-wall {
+    top: 5rem;
+    right: 6.1rem;
+    transform: scaleX(-1);
+  }
+  .thebes-city-wall {
+    bottom: 5.1rem;
+    right: 6.3rem;
+    transform: rotate(180deg);
+  }
+  .troy-city-wall {
+    bottom: 5rem;
+    left: 6rem;
+    transform: rotate(180deg) scaleX(-1);
+  }
+  .athens-city-house-container {
+    top: 8rem;
+    left: -10%;
+  }
+  .sparta-city-house-container {
+    top: 8rem;
+    right: -10%;
+    transform: scaleX(-1);
+  }
+  .thebes-city-house-container {
+    bottom: 8rem;
+    right: -10%;
+    transform: scaleX(-1);
+  }
+  .troy-city-house-container {
+    bottom: 8rem;
+    left: -11%;
+  }
+  .house-container {
+    position: absolute;
+    height: 10.5rem;
+    width: 20rem;
+  }
+  .house {
+    position: absolute;
+    width: 3rem;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .house.occupied {
+    opacity: 1;
+  }
+  .house1 {
+    top: 0%;
+    left: 0%;
+  }
+  .house2 {
+    top: 5%;
+    left: 20%
+  }
+  .house3 {
+    top: 30%;
+    left: 5%;
+  }
+  .house4 {
+    top: 35%;
+    left: 25%;
+  }
+  .house5 {
+    top: 60%;
+    left: 0%;
+  }
+  .house6 {
+    top: 65%;
+    left: 20%;
+  }
+  .house7 {
+    left: 37%;
+    top: 10%;
+  }
+  .house8 {
+    top: 53%;
+    left: 37%;
+  }
+  .house9 {
+    right: 0%;
+    top: 0%;
+  }
+  .house10 {
+    right: -3%;
+    top: 30%;
+  }
+  .house11 {
+    right: 0%;
+    top: 65%;
+  }
+  .sparta-city-house-container .house5 {
+    top: 70%;
+    left: 0%;
+  }
+  .sparta-city-house-container .house9 {
+    left: 55%;
+    top: 12%;
+  }
+  .sparta-city-house-container .house10 {
+    left: 60%;
+    top: 40%;
+  }
+  .sparta-city-house-container .house11 {
+    left: 55%;
+    top: 70%;
+  }
+  .thebes-city-house-container .house5 {
+    top: 70%;
+    left: 0%;
+  }
+  .thebes-city-house-container .house9 {
+    left: 55%;
+    top: 12%;
+  }
+  .thebes-city-house-container .house10 {
+    left: 55%;
+    top: 40%;
+  }
+  .thebes-city-house-container .house11 {
+    left: 55%;
+    top: 70%;
+  }
+  .thebes-city-house-container .house1 {
+    left: 10%;
+    top: 95%;
   }

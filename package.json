@@ -18,8 +18,7 @@
     "react-transition-group": "^2.2.1",
     "serve": "^10.1.2",
     "stylus": "0.54.5",
-    "vercel": "^21.3.3",
-    "yarn": "^1.22.11"
+    "vercel": "^23.0.0"
   },
   "scripts": {
     "dev": "react-scripts start",

@@ -18,6 +18,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <Battlefield 
             pos="r" id={"right"} 
@@ -27,6 +28,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <Battlefield2 
             pos="t" id={"top"} 
@@ -36,6 +38,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <Battlefield2 
             pos="b" id={"bottom"} 
@@ -45,6 +48,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield 
             pos="as" id={"athensCity-t2"} 
@@ -54,6 +58,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield2 
             pos="ad" id={"athensCity-t3"} 
@@ -63,6 +68,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield 
             pos="ss" id={"spartaCity-t2"} 
@@ -72,6 +78,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield2 
             pos="sd" id={"spartaCity-t3"} 
@@ -81,6 +88,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield 
             pos="ts" id={"troyCity-t2"} 
@@ -90,6 +98,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield2 
             pos="td" id={"troyCity-t3"} 
@@ -99,6 +108,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield 
             pos="ths" id={"thebesCity-t2"} 
@@ -108,6 +118,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             <CityBattlefield2 
             pos="thd" id={"thebesCity-t3"} 
@@ -117,6 +128,7 @@ class Battlefields extends React.Component {
             selectedCard={this.props.selectedCard}
             canMoveTo={this.props.canMoveTo}
             canAttack={this.props.canAttack}
+            canCast={this.props.canCast}
             />
             </>
         )

@@ -43,8 +43,9 @@ class HostForm extends React.Component {
     render() {
         return (
             <form className="host-form" onSubmit={this.createLobby}>
-                <label>Lobby Name: </label>
+                <label className="host-form-label" >Lobby Name: </label>
                 <input 
+                    className="host-form-item"
                     id="name1"
                     name="name" 
                     ref={this.nameRef} 
@@ -53,19 +54,19 @@ class HostForm extends React.Component {
                     placeholder="Name" 
                     defaultValue={getFunName()}
                 />
-                <label>City Asignment: </label>
-                <select name="city-assign" id="city" required ref={this.cityRef}>
+                <label className="host-form-label" >City Asignment: </label>
+                <select className="host-form-item" name="city-assign" id="city" required ref={this.cityRef}>
                     <option value="random">Random</option>
                     <option value="choice">Choose</option>
                 </select>
-                <label>Gamespeed: </label>
-                <select name="gamespeed" required ref={this.gamespeedRef}>
+                <label className="host-form-label" >Gamespeed: </label>
+                <select className="host-form-item" name="gamespeed" required ref={this.gamespeedRef}>
                     <option value={1}>Normal</option>
                     <option value={0.5}>Slow (x1/2)</option>
                     <option value={2}>Quick (x2)</option>
                     <option value={4}>Rapid (x4)</option>
                 </select>
-                <button type="submit">Host Game</button>
+                <button className="host-button" type="submit">Host Game</button>
             </form>
         );
     }

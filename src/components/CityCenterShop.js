@@ -46,6 +46,7 @@ class CityCenterShop extends React.Component {
         let team = Object.keys(game.teams).filter(team => game.teams[team].player===user.name)[0];
         const cityLevel = game.teams[team].level;
         const playerEcon = {food: game.teams[team].food, money: game.teams[team].money}
+        const tm = game.teams[team]
         return (
             <>
             <div onClick={this.closeShop} className={`city-shop-modal-outer ${team}-city-shop-out ${this.state.shopOpen}`}>
@@ -53,16 +54,16 @@ class CityCenterShop extends React.Component {
                     <div className="city-level-tree">
                     <h2 style={{position: "absolute", top: "-10%"}}><u>City Level</u></h2>
                     <img style={{width: "100%"}} src={CityLevelTree} alt="CityLevelTree" />
-                    <CityLevelButton style={{left: "42%", top: "-5%", width: "2.2vw"}} id={10} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[10]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "55%", top: "6%"}} id={9} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[9]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "0%", top: "15%"}} id={8} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[8]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "47%", top: "27%"}} id={7} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[7]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "0%", top: "30%"}} id={6} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[6]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "70%", top: "40%"}} id={5} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[5]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "12%", top: "52%"}} id={4} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[4]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "85%", top: "60%"}} id={3} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[3]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "32%", top: "63%"}} id={2} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[2]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} />
-                    <CityLevelButton style={{left: "90%", top: "83%"}} id={1} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[1]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} /> 
+                    <CityLevelButton style={{left: "42%", top: "-5%", width: "2.2vw"}} id={10} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[10]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "55%", top: "6%"}} id={9} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[9]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "0%", top: "15%"}} id={8} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[8]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "47%", top: "27%"}} id={7} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[7]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "0%", top: "30%"}} id={6} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[6]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "70%", top: "40%"}} id={5} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[5]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "12%", top: "52%"}} id={4} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[4]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "85%", top: "60%"}} id={3} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[3]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "32%", top: "63%"}} id={2} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[2]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} />
+                    <CityLevelButton style={{left: "90%", top: "83%"}} id={1} cityLevel={cityLevel} updateLevelDisplay={this.updateLevelDisplay} cost={this.levelCosts[1]} playerEcon={playerEcon} upLevel={this.props.upLevel} team={team} pericles={this.props.game.teams[team].pericles} /> 
                     <div className="city-level-price">
                         <div className="level-display">
                             {`Level ${this.state.levelDisplay}:`}
@@ -81,7 +82,9 @@ class CityCenterShop extends React.Component {
                         </h2>
                         <CityBuildingShopItem 
                             building={{name: "Walls", desc: "a 15 health buffer to your city which only takes 1 dmg from units", id: "walls"}} 
-                            cost={15} 
+                            cost={
+                                (15 - Object.values(tm.modifiers.discount.walls.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0) - Object.values(tm.modifiers.discount.buildings.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))*(1-Object.values(tm.modifiers.discount.buildings.multiplier).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))
+                            } 
                             playerEcon={playerEcon} 
                             buildings={game.teams[team].buildings} 
                             buyBuilding={this.props.buyBuilding} 
@@ -90,7 +93,9 @@ class CityCenterShop extends React.Component {
                         <div className="divider" />
                         <CityBuildingShopItem 
                             building={{name: "Barracks", desc: "allows for the training of soldiers", id: "barracks"}} 
-                            cost={5} 
+                            cost={
+                                (5 - Object.values(tm.modifiers.discount.buildings.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))*(1-Object.values(tm.modifiers.discount.buildings.multiplier).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))
+                            } 
                             playerEcon={playerEcon} 
                             buildings={game.teams[team].buildings} 
                             buyBuilding={this.props.buyBuilding} 
@@ -99,7 +104,9 @@ class CityCenterShop extends React.Component {
                         <div className="divider" />
                         <CityBuildingShopItem 
                             building={{name: "Archery Range", desc: "allows for the training of archers", id: "archerRange"}} 
-                            cost={8} 
+                            cost={
+                                (8 - Object.values(tm.modifiers.discount.buildings.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))*(1-Object.values(tm.modifiers.discount.buildings.multiplier).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))
+                            } 
                             playerEcon={playerEcon} 
                             buildings={game.teams[team].buildings} 
                             buyBuilding={this.props.buyBuilding} 
@@ -108,7 +115,9 @@ class CityCenterShop extends React.Component {
                         <div className="divider" />
                         <CityBuildingShopItem 
                             building={{name: "Stables", desc: "allows for the training of horsemen", id: "stables"}} 
-                            cost={12} 
+                            cost={
+                                (12 - Object.values(tm.modifiers.discount.buildings.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))*(1-Object.values(tm.modifiers.discount.buildings.multiplier).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))
+                            } 
                             playerEcon={playerEcon} 
                             buildings={game.teams[team].buildings} 
                             buyBuilding={this.props.buyBuilding} 
@@ -117,7 +126,9 @@ class CityCenterShop extends React.Component {
                         <div className="divider" />
                         <CityBuildingShopItem 
                             building={{name: "Workshop", desc: "allows for the construction of seige engines and equipment", id: "workshop"}} 
-                            cost={15} 
+                            cost={
+                                (15 - Object.values(tm.modifiers.discount.buildings.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))*(1-Object.values(tm.modifiers.discount.buildings.multiplier).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0))
+                            } 
                             playerEcon={playerEcon} 
                             buildings={game.teams[team].buildings} 
                             buyBuilding={this.props.buyBuilding} 

@@ -142,6 +142,9 @@
     position: relative;
     top: 10%;
   }
+  .shop-buy-card-price.hide {
+    opacity: 0;
+  }
   .shop-buy-card-description {
     position: absolute;
     top: 70%;

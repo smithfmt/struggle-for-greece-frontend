@@ -4,6 +4,8 @@ import Battlefields from "./Battlefields";
 import Delphi from "./Delphi";
 import Menu from "./Menu";
 import Card from "./Card";
+import BoardMap from "../images/BoardMap.jpg";
+import BackgroundTrees from "../images/BackgroundTrees.jpg";
 //import PropTypes from "prop-types";
 
 class Board extends React.Component {
@@ -17,8 +19,12 @@ class Board extends React.Component {
             <>
             <Menu 
             goToPage={this.props.goToPage}
+            openCardList={this.props.openCardList}
+            openPlayerInfo={this.props.openPlayerInfo}
             />
             <div className="board-map" onMouseMove={this.props.moveMovingCard}>
+                <img src={BackgroundTrees} alt="BackgroundTrees" className="background-trees" />
+                <img src={BoardMap} alt="BoardMap" className="board-map-image" />
                 <div className="moving-card">
                     {movingCard}
                 </div>
@@ -36,6 +42,8 @@ class Board extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
+                calculateIncome={this.props.calculateIncome}
                 />
                 <City 
                 team="troy-city"
@@ -51,6 +59,8 @@ class Board extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
+                calculateIncome={this.props.calculateIncome}
                 />
                 <City 
                 team="sparta-city"
@@ -66,6 +76,8 @@ class Board extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
+                calculateIncome={this.props.calculateIncome}
                 />
                 <City 
                 team="thebes-city"
@@ -81,6 +93,8 @@ class Board extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
+                calculateIncome={this.props.calculateIncome}
                 />
                 <Battlefields 
                 cardSlotProps={this.props.cardSlotProps}
@@ -89,6 +103,7 @@ class Board extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
                 />
                 <Delphi 
                 cardSlotProps={this.props.cardSlotProps}
@@ -97,11 +112,13 @@ class Board extends React.Component {
                 selectedCard={this.props.selectedCard}
                 canMoveTo={this.props.canMoveTo}
                 canAttack={this.props.canAttack}
+                canCast={this.props.canCast}
                 delphiHeroCards={this.props.delphiHeroCards}
                 openBuyModal={this.props.openBuyModal}
                 game={this.props.game}
                 buyingCard={this.props.buyingCard}
                 heroForHire={this.props.heroForHire}
+                consultOracle={this.props.consultOracle}
                 />
             </div>
             </>

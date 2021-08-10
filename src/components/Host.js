@@ -6,8 +6,9 @@ class Host extends React.Component {
 
     render() {
         return (<>
+        <h2 className="page-title">Host</h2>
             <HostForm hostLobby={this.props.hostLobby}/>
-            <button onClick={() => this.props.goToPage("/")}>Return to Main Menu</button>
+            <button className="mm-button" onClick={() => this.props.goToPage("/")}>Return to Main Menu</button>
             </>
         );
     }

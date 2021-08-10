@@ -5,23 +5,20 @@ import CoinIcon from "../images/Icons/CoinIcon.png";
 import Card from "./Card";
 
 class ShopCard extends React.Component {
-
+    
     render() {
-        if (!this.props.card) {
-            return (
-                <button className="shop-card">
-                    {this.props.card.type}
-                    <div className="shop-card-price">
-                        <div className="price-food">
-                            {this.props.card.food} <img src={FoodIcon} alt="FoodIcon" />
-                        </div>
-                        <div className="price-money">
-                            {this.props.card.money} <img src={CoinIcon} alt="CoinIcon" />
-                        </div>
-                    </div>
-                </button>
-            );
-        }
+
+        if (!this.props.card || !this.props.game) return null;
+        const team = this.props.game.teams[this.props.team];
+        let foodCost = this.props.card.food;
+        let moneyCost = this.props.card.money;
+        if (this.props.card.id==="Hero") {
+            moneyCost = this.props.card.money - Object.values(team.modifiers.discount.heroes.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0);
+        };
+        if (this.props.card.id==="Soldier") {
+            foodCost = this.props.card.food - Object.values(team.modifiers.discount.soldiers.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0);
+        };
+
         if (this.props.bought && this.props.bought[this.props.card.name]) {
             return (
             <>
@@ -32,28 +29,28 @@ class ShopCard extends React.Component {
                 <Card card={this.props.card} team={this.props.team} type={"shopCard"}/>
                 <div className="shop-card-price">
                     <div className="price-food">
-                        {this.props.card.food} <img src={FoodIcon} alt="FoodIcon" />
+                        {foodCost} <img src={FoodIcon} alt="FoodIcon" />
                     </div>
                     <div className={`price-money`}>
-                        {this.props.card.money} <img src={CoinIcon} alt="CoinIcon" />
+                        {moneyCost} <img src={CoinIcon} alt="CoinIcon" />
                     </div>
                 </div>
             </button>
             </>
             );
-        }
+        };
         let moneyPriceClass;
-        if (this.props.card.money>9) {moneyPriceClass="price-money2"}
+        if (moneyCost>9) {moneyPriceClass="price-money2"}
         return (
             <>
             <button className="shop-card" onClick={() => {this.props.openBuyModal(this.props.card)}}>
                 <Card card={this.props.card} team={this.props.team} type={"shopCard"}/>
                 <div className="shop-card-price">
                     <div className="price-food">
-                        {this.props.card.food} <img src={FoodIcon} alt="FoodIcon" />
+                        {foodCost} <img src={FoodIcon} alt="FoodIcon" />
                     </div>
                     <div className={`price-money ${moneyPriceClass}`}>
-                        {this.props.card.money} <img src={CoinIcon} alt="CoinIcon" />
+                        {moneyCost} <img src={CoinIcon} alt="CoinIcon" />
                     </div>
                 </div>
             </button>

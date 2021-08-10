@@ -16,7 +16,7 @@
   }
   .menu-modal-inner {
     width: 20%;
-    height: 60%;
+    height: auto;
     position: fixed;
     left: 40%;
     top: 20%;
@@ -26,8 +26,9 @@
     font-size: 1vw;
   }
   .ingame-menu-button {
+    font-size: inherit;
     width: 100%;
-    height: 10%;
+    height: 3vw;
     background-color: mediumaquamarine;
     border: rgba(0, 0, 0, 0.2) 0.4vw solid;
   }
@@ -138,4 +139,239 @@
   .moving-card-container {
     width: 100%;
     height: 100vw;
+  }
+  
+  .event-icon-container {
+    display: flex;
+    position: fixed;
+    left: 1%;
+    top: 5%;
+  }
+  .event-icon {
+    border-radius: 50%;
+    background-color: gray;
+    border:rgba(41, 41, 41, 0.822) solid 0.4vw;
+    height: 1.5vw;
+    width: 1.5vw;
+    margin-right: 1vw;
+    cursor: pointer;
+  }
+  .event-icon.positive {
+    border: seagreen solid 0.4vw;
+  }
+  .event-icon.negative {
+    border: rgb(143, 5, 5) solid 0.4vw;
+  }
+  .event-icon img {
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .card-info-tab {
+    position: fixed;
+    left: -31%;
+    background-color: gray;
+    border: rgba(0, 0, 0, 0.548) solid 0.5vw;
+    border-radius: 2vw;
+    z-index: 101;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    top: 13%;
+    height: 75%;
+    width: 30%;
+    transition: all 0.5s;
+  }
+  .card-info-tab.open {
+    left: -2%;
+  }
+  .card-info-tab button{
+    position: absolute;
+    right:-7.5%;
+    height: 6vw;
+    width: 2vw;
+    background-color: rgb(59, 59, 59);
+    border: rgb(59, 59, 59) solid 0.2vw;
+    color: whitesmoke;
+    border-radius: 20%;
+    cursor: pointer;
+  }
+  .card-info-tab button:hover{
+    background-color: rgb(109, 108, 108);
+    color: rgb(53, 53, 53);
+  }
+
+  .card-list-container {
+    font-size: 2rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: rgba(2, 2, 2, 0.678);
+  }
+  .card-list-container .city-health-outer {
+    opacity: 0;
+  };
+  .card-list-container .city-walls-inner {
+    opacity: 0;
+  };
+  .card-list-title {
+    margin-top: 5%;
+  }
+  
+  .card-list-section {
+    position: relative;
+    display: flex;
+    width: 70%;
+    left: 15%;
+    flex-wrap: wrap;
+    margin-bottom: 5rem;
+  }
+  .card-list-modal-in {
+    position: absolute;
+    z-index: 101;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+    width: 40%;
+    background-color: gray;
+    border-radius: 10%;
+    border:rgba(0, 0, 0, 0.657) solid 1vw;
+  }
+  .card-list-display-wrapper {
+    position: absolute;
+    top: 20%;
+  }
+  .card-list-button {
+    height: 4rem;
+    width: 20rem;
+    color: rgb(255, 255, 255);
+    background-color: rgb(74, 77, 161);
+    border-radius: 10%;
+    border: rgba(12, 2, 99, 0.76) solid 0.3vw;
+    cursor: pointer;
+    font-size: 2rem;
+  }
+  .card-list-button:hover {
+    color: rgb(12, 2, 59);
+    background-color: rgb(129, 133, 255);
+  }
+
+  .player-info {
+    position: relative;
+    margin-bottom: 1vw;
+    margin-top: 1vw;
+    padding-left: 2vw;
+    padding-top: 0.2vw;
+    padding-bottom: 1.5vw;
+    left: -1%;
+  }
+  .player-info-resources {
+    width: 12vw;
+    position: relative;
+    display: flex;
+    margin-left: 1vw;
+  }
+  .player-info-resources div {
+    display: flex;
+    font-size: 2vw;
+    width: 3vw;
+    margin-right: 3vw;
+    color: rgba(0, 0, 0, 0.746);
+  }
+  .player-info h2 {
+    font-size: 2.5vw;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: rgba(0, 0, 0, 0.746);
+  }
+  .player-info h3 {
+    font-size: 1.8vw;
+    margin-left: 1vw;
+    color: rgba(0, 0, 0, 0.746);
+  }
+  .player-info-divider {
+    position: relative;
+    width: 25vw;
+    height: 0.5vw;
+    left: -1%;
+    top: 1vw;
+    background-color: rgba(128, 128, 128, 0.397);
+    border: rgba(0, 0, 0, 0.349) solid 0.3vw;
+  }
+  .player-info.athens {
+    background-color: cornflowerblue;
+  }
+  .player-info.sparta {
+    background-color: rgb(237, 100, 107);
+  }
+  .player-info.thebes {
+    background-color: rgb(237, 223, 100);
+  }
+  .player-info.troy {
+    background-color: rgb(100, 237, 100);
+  }
+
+  .ability-button {
+    position: fixed;
+    bottom: 1vw;
+    width: auto;
+    height: 3vw;
+    color: rgb(182, 182, 182);
+    left: 47%;
+    border-radius: 1vw;
+    border: rgba(71, 71, 71, 0.507) solid 0.3vw;
+  }
+  .cooldown-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2vw;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.8vw;
+    position: absolute;
+    background-color: rgba(245, 245, 245, 0.582);
+    z-index: 10;
+    pointer-events: none;
+    color: black;
+  }
+  .cooldown-div.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ability-button:hover {
+    background-color: rgb(116, 116, 116) !important;
+    color: rgb(73, 72, 72);
+    cursor: pointer;
+  }
+  .ability-button.cd {
+    pointer-events: none;
+    cursor: unset;
+  }
+  .ability-button.athens {
+    background-color: rgb(104, 157, 204);
+    border: rgb(57, 101, 139) solid 0.3vw;
+  }
+  .ability-button.sparta {
+    background-color: rgb(223, 107, 107);
+    border: rgb(160, 51, 51) solid 0.3vw;
+  }
+  .ability-button.troy {
+    background-color: rgb(114, 230, 123);
+    border: rgb(46, 160, 55) solid 0.3vw;
+  }
+  .ability-button.thebes {
+    background-color: rgb(212, 202, 104);
+    border: rgb(199, 179, 2) solid 0.3vw;
+  }
+  .ability-button.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .can-cast-event{
+    background-color: antiquewhite;
+    border: solid rgba(37, 37, 37, 0.493) 0.3vw;
   }

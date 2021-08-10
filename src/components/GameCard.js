@@ -6,10 +6,13 @@ class GameCard extends React.Component {
     render() {
         return (
             <div className="game-card">
-                {this.props.game}
+                <div>
+                    {this.props.game} 
+                </div>
                 <button onClick={() => this.props.joinGameFromList(this.props.game)}>
                     Join Game
                 </button>
+                <div className="card-divider"></div>
             </div>
         );
     };

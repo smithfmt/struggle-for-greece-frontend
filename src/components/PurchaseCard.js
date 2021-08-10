@@ -16,17 +16,35 @@ class PurchaseCard extends React.Component {
     };
 
     render() {
-        let moneyPriceClass;
-        if (this.props.card.money>9) {moneyPriceClass="price-money2"};
-        let canBuy;
+        let moneyPriceClass="";
+        let canBuy = "";
         const { game, team, card } = this.props;
-        if (!game.teams.troy) return null;
+        if (card.money>9) {moneyPriceClass="price-money2"};
+
+        let foodCost = card.food;
+        let moneyCost = card.money;
+        if (card.id==="Hero") {
+            moneyCost = card.money - Object.values(game.teams[team].modifiers.discount.heroes.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0);
+        };
+        if (card.id==="Soldier") {
+            foodCost = card.food - Object.values(game.teams[team].modifiers.discount.soldiers.int).filter(val => val!==null).reduce((acc, {value}) => value + acc, 0);
+        };
+
+        if (!game.teams.troy || !game.teams.troy.money) return null;
         if ((game.teams[team].money > card.money-1) && (game.teams[team].food > card.food-1) && (game.whoTurn === team) && game.teams[team].buildings[this.shopRef[card.id]] && this.props.open) {
             canBuy = "purchaseable";
         };
-        if (game.whoTurn === team && this.props.isInDelphi && this.props.open) {
+        if (game.whoTurn === team && this.props.isInDelphi && this.props.open && game.teams[team].money > card.money-1) {
             canBuy = "purchaseable"
-        }
+        };
+        if (this.props.card.text==="Citizen") {
+            canBuy = "";
+            if (team==="sparta") {
+                canBuy = "purchaseable";
+            } else if (game.teams[team].citizens.number < game.teams[team].level+1 && game.whoTurn === team && game.teams[team].food>0) {
+                canBuy = "purchaseable";
+            };
+        };
         return (
             <>
             <div onClick={this.props.closeBuyModal} className={`shop-buy-modal-out ${this.props.open}`}>
@@ -36,10 +54,10 @@ class PurchaseCard extends React.Component {
                     </div>
                     <div className="shop-buy-card-price shop-card-price">
                         <div className="price-food">
-                            {this.props.card.food} <img src={FoodIcon} alt="FoodIcon" />
+                            {foodCost} <img src={FoodIcon} alt="FoodIcon" />
                         </div>
                         <div className={`price-money ${moneyPriceClass}`}>
-                            {this.props.card.money} <img src={CoinIcon} alt="CoinIcon" />
+                            {moneyCost} <img src={CoinIcon} alt="CoinIcon" />
                         </div>
                     </div>
                     <div className="shop-buy-card-buffer"></div>
